@@ -1,0 +1,7 @@
+{
+  "name": "polaris",
+  "private": true,
+  "scripts": {
+    "audit:fix": "npm audit fix"
+  }
+}
