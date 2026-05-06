@@ -16,7 +16,10 @@ export default function HomePage() {
   const x = useTransform(mouseX, [-50, 50], [-16, 16]);
   const yFromMouse = useTransform(mouseY, [-50, 50], [-12, 12]);
   const yFromScroll = useTransform(scrollY, [0, 320], [0, -14]);
-  const y = useTransform([yFromMouse, yFromScroll], ([my, sy]) => my + sy);
+  const y = useTransform(
+    [yFromMouse, yFromScroll],
+    ([my, sy]: [number, number]) => my + sy,
+  );
 
   const xSmooth = useSpring(x, { stiffness: 90, damping: 20, mass: 0.4 });
   const ySmooth = useSpring(y, { stiffness: 90, damping: 20, mass: 0.4 });
