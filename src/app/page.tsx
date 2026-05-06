@@ -66,60 +66,63 @@ export default function HomePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: "easeOut", delay: 0.15 }}
-          className="relative overflow-hidden rounded-3xl border border-glass-border bg-glass px-6 py-8 backdrop-blur-xl"
+          className="relative overflow-hidden rounded-3xl border border-glass-border bg-glass px-6 py-8 shadow-glass ring-1 ring-inset ring-glass-highlight backdrop-blur-xl"
         >
-          <div className="flex items-center justify-between text-xs uppercase tracking-[0.4em] text-slate-400">
-            <span>Growth signal</span>
-            <span>MT 51</span>
-          </div>
-          <svg
-            viewBox="0 0 700 260"
-            className="mt-8 h-56 w-full"
-            role="img"
-            aria-label="Grafico de crescimento tecnologico"
-          >
-            <defs>
-              <linearGradient id="polaris-gradient" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.2" />
-                <stop offset="55%" stopColor="#38BDF8" stopOpacity="0.7" />
-                <stop offset="100%" stopColor="#0EA5E9" stopOpacity="0.35" />
-              </linearGradient>
-            </defs>
-            <motion.path
-              d="M20 210 L120 180 L220 190 L320 120 L420 145 L520 80 L640 40"
-              fill="none"
-              stroke="url(#polaris-gradient)"
-              strokeWidth="3"
-              strokeLinecap="round"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 1 }}
-              transition={{ duration: 1.6, ease: "easeInOut", delay: 0.2 }}
-            />
-            <motion.path
-              d="M20 210 L120 180 L220 190 L320 120 L420 145 L520 80 L640 40 L640 260 L20 260 Z"
-              fill="url(#polaris-gradient)"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.45 }}
-              transition={{ duration: 1.4, ease: "easeOut", delay: 0.4 }}
-            />
-            {[
-              [120, 180],
-              [320, 120],
-              [520, 80],
-              [640, 40],
-            ].map(([cx, cy], index) => (
-              <motion.circle
-                key={`${cx}-${cy}`}
-                cx={cx}
-                cy={cy}
-                r={index === 3 ? 6 : 4}
-                fill="#38BDF8"
-                initial={{ opacity: 0, scale: 0.6 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
+          <div className="pointer-events-none absolute inset-0 bg-glass-highlight opacity-55" />
+          <div className="relative">
+            <div className="flex items-center justify-between text-xs uppercase tracking-[0.4em] text-slate-400">
+              <span>Growth signal</span>
+              <span>MT 51</span>
+            </div>
+            <svg
+              viewBox="0 0 700 260"
+              className="mt-8 h-56 w-full"
+              role="img"
+              aria-label="Grafico de crescimento tecnologico"
+            >
+              <defs>
+                <linearGradient id="polaris-gradient" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.2" />
+                  <stop offset="55%" stopColor="#38BDF8" stopOpacity="0.7" />
+                  <stop offset="100%" stopColor="#0EA5E9" stopOpacity="0.35" />
+                </linearGradient>
+              </defs>
+              <motion.path
+                d="M20 210 L120 180 L220 190 L320 120 L420 145 L520 80 L640 40"
+                fill="none"
+                stroke="url(#polaris-gradient)"
+                strokeWidth="3"
+                strokeLinecap="round"
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: 1 }}
+                transition={{ duration: 1.6, ease: "easeInOut", delay: 0.2 }}
               />
-            ))}
-          </svg>
+              <motion.path
+                d="M20 210 L120 180 L220 190 L320 120 L420 145 L520 80 L640 40 L640 260 L20 260 Z"
+                fill="url(#polaris-gradient)"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.45 }}
+                transition={{ duration: 1.4, ease: "easeOut", delay: 0.4 }}
+              />
+              {[
+                [120, 180],
+                [320, 120],
+                [520, 80],
+                [640, 40],
+              ].map(([cx, cy], index) => (
+                <motion.circle
+                  key={`${cx}-${cy}`}
+                  cx={cx}
+                  cy={cy}
+                  r={index === 3 ? 6 : 4}
+                  fill="#38BDF8"
+                  initial={{ opacity: 0, scale: 0.6 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
+                />
+              ))}
+            </svg>
+          </div>
         </motion.figure>
       </div>
     </main>

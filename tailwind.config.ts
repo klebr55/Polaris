@@ -3,7 +3,7 @@ import plugin from "tailwindcss/plugin";
 
 const config: Config = {
   darkMode: "class",
-  content: ["./src/**/*.{ts,tsx,mdx}"],
+  content: ["./src/**/*.{js,jsx,ts,tsx,mdx}"],
   theme: {
     extend: {
       colors: {
@@ -11,11 +11,16 @@ const config: Config = {
           950: "#0A192F",
         },
         slate: {
+          100: "#F1F5F9",
+          300: "#CBD5E1",
+          400: "#94A3B8",
           800: "#1E293B",
+          900: "#0F172A",
         },
         glass: {
-          DEFAULT: "rgb(255 255 255 / 0.06)",
-          border: "rgb(148 163 184 / 0.18)",
+          DEFAULT: "rgb(15 23 42 / 0.55)",
+          border: "rgb(148 163 184 / 0.2)",
+          highlight: "rgb(255 255 255 / 0.08)",
         },
       },
       fontFamily: {
