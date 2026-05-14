@@ -1,92 +1,80 @@
-# Documentacao Polaris
+# Documentação Polaris
 
-## Visao geral
-Este documento resume tudo o que foi criado e configurado ate agora para o projeto Polaris.
+## Visão geral
+Este documento resume tudo o que foi criado e configurado até agora para o projeto Polaris, uma experiência de data storytelling sobre o crescimento tecnológico de Mato Grosso.
 
 ## Estrutura inicial
-Camadas criadas em /src seguindo Clean Architecture e modularizacao:
-- src/components/ui
-- src/components/modules
-- src/core
-- src/services/sidra
-- src/hooks
-- src/styles
-- src/types
-
-Arquivos base do App Router:
-- src/app/layout.tsx
-- src/app/page.tsx
+Camadas organizadas em `/src` seguindo princípios de modularização e separação de preocupações:
+- `src/app`: Rotas e layout principal (App Router).
+- `src/components/ui`: Componentes de interface genéricos e atômicos.
+- `src/components/modules`: Seções e componentes complexos do projeto:
+    - `HeroSection.tsx`: Container principal com animações de entrada.
+    - `ComparisonSection.tsx`: Gráfico comparativo Urbano vs Rural animado com GSAP.
+    - `InternetAccessCard.tsx`: Card principal que renderiza o gráfico de acesso à internet.
+    - `InternetAccessSkeleton.tsx`: Estado de carregamento para o card de dados.
+- `src/core`: Lógica de negócio e utilitários centrais.
+- `src/services/sidra`: Integração com a API SIDRA do IBGE.
+- `src/hooks`: Hooks customizados para lógica de UI.
+- `src/styles`: Configurações globais de CSS e temas.
+- `src/types`: Definições TypeScript para domínio e APIs.
 
 ## UI, tema e estilos
-- Tailwind v4 configurado com tokens para dark mode, glassmorphism e tipografia com Geist/Inter.
-- Glassmorphism inclui tokens: glass, glass.border e glass.highlight.
-- Utilitario customizado: transition-soft.
-- CSS global usa a entrada do Tailwind v4 via @import "tailwindcss".
-- Fundo global com gradiente radial sutil + textura grainy no layout.
-
-Arquivos relevantes:
-- tailwind.config.ts
-- postcss.config.mjs
-- src/styles/globals.css
-- src/app/layout.tsx
+- **Tailwind v4**: Configurado via `@import "tailwindcss"` em `globals.css`.
+- **Tokens Customizados**: Definidos em `tailwind.config.ts` (cores `polaris-blue`, `glass`, tipografia `Geist/Inter`).
+- **Glassmorphism**: Sistema de tokens para transparência e desfoque (`glass`, `glass.border`, `glass.highlight`).
+- **Efeitos**: Textura "grainy" aplicada via SVG no `body::before` para profundidade visual.
+- **Transições**: Utilitário customizado `transition-soft` para animações fluidas de UI.
 
 ## Hero Section (Data as Art)
-- Hero com titulo e subtitulo animados via framer-motion (fade-in e subida).
-- Reacao leve a mouse e scroll com useTransform.
-- Grafico dummy via SVG animado como placeholder para dados reais.
-- Bloco glass com highlight e ring para contraste.
+- Título e subtítulo com gradientes e animações de subida via `framer-motion`.
+- Container em estilo "Glass" que abriga o conteúdo dinâmico.
+- Foco em narrativa visual (Data Storytelling).
 
 Arquivo relevante:
-- src/app/page.tsx
+- `src/components/modules/HeroSection.tsx`
 
-## Servico SIDRA (IBGE)
-- Servico TypeScript com Adapter Pattern para converter resposta do SIDRA em serie simplificada para graficos.
-- Endpoint focado em "Proporcao de domicilios com acesso a internet" para MT (codigo 51).
-- Tratamento de erros robusto com SidraServiceError.
-- Fetch nativo do Next com revalidate semanal.
+## Comparison Section (Urbano vs Rural)
+- Seção que destaca a diferença de acesso entre áreas urbanas e rurais.
+- **Animações**: Utiliza `GSAP` e `ScrollTrigger` para animar as barras de progresso conforme o usuário faz o scroll.
+- **Design**: Gradientes lineares e sombras neon para destacar os dados.
 
-Arquivos relevantes:
-- src/services/sidra/pnadTicInternetAccessService.ts
-- src/services/sidra/index.ts
-- src/types/ibge.ts
+Arquivo relevante:
+- `src/components/modules/ComparisonSection.tsx`
 
-## Deploy e seguranca
-- vercel.json com headers de seguranca (CSP, HSTS, X-Content-Type-Options).
-- next.config.mjs configurado para falhar build com erros de lint e TypeScript.
-- Script audit:fix para mitigar vulnerabilidades.
+## Serviço SIDRA (IBGE) & Gráficos
+- **Integração**: Adapter Pattern para converter a resposta complexa do SIDRA em séries temporais simples.
+- **Componente**: `InternetAccessCard` utiliza `Recharts` para renderizar um gráfico de área (AreaChart) com gradientes e "glow effects".
+- **Performance**: Fetch nativo do Next.js com `revalidate` configurado para atualização periódica.
+- **UX**: `Suspense` com `InternetAccessSkeleton` para transição suave durante o fetch de dados.
 
 Arquivos relevantes:
-- vercel.json
-- next.config.mjs
-- package.json
+- `src/services/sidra/pnadTicInternetAccessService.ts`
+- `src/components/modules/InternetAccessCard.tsx`
+- `src/app/page.tsx`
 
-## Variaveis de ambiente
-Arquivo base para deploy:
-- .env.example
+## Deploy e segurança
+- `vercel.json` com headers de segurança (CSP, HSTS, X-Content-Type-Options).
+- `next.config.mjs` configurado para validação rigorosa de Lint e TypeScript durante o build.
 
-Variaveis atuais:
-- SIDRA_BASE_URL
-- SIDRA_TABLE_ID
-- SIDRA_VARIABLE_ID
-- SIDRA_TERRITORY_LEVEL
-- SIDRA_TERRITORY_CODE
-- SIDRA_PERIOD
-- SIDRA_REVALIDATE_SECONDS
+## Variáveis de ambiente
+Variáveis necessárias (ver `.env.example`):
+- `SIDRA_BASE_URL`
+- `SIDRA_TABLE_ID`
+- `SIDRA_VARIABLE_ID`
+- `SIDRA_TERRITORY_LEVEL`
+- `SIDRA_TERRITORY_CODE`
+- `SIDRA_PERIOD`
+- `SIDRA_REVALIDATE_SECONDS`
 
-## Dependencias principais
-- next 16.2.5
-- react 19.2.0
-- react-dom 19.2.0
-- tailwindcss 4.2.0
-- framer-motion, lucide-react, clsx, tailwind-merge, tailwind-animate
+## Dependências principais
+- **Framework**: `next 16.2.5`, `react 19.2.0`
+- **Estilos**: `tailwindcss 4.2.0`, `tailwindcss-animate`
+- **Animações**: `framer-motion`, `gsap`
+- **Gráficos**: `recharts`
+- **Ícones & Util**: `lucide-react`, `clsx`, `tailwind-merge`
 
 ## Scripts
-- dev: next dev
-- build: next build
-- start: next start
-- lint: next lint
-- audit:fix: npm audit fix
-
-## Observacoes
-- Para o Tailwind v4, o plugin @tailwindcss/postcss ja esta configurado no postcss.config.mjs.
-- O projeto ainda nao possui tsconfig.json e next-env.d.ts, que normalmente sao gerados pelo Next ao rodar o dev server.
+- `npm run dev`: Inicia o servidor de desenvolvimento.
+- `npm run build`: Gera o bundle de produção.
+- `npm run lint`: Executa a verificação estática do código.
+- `npm run audit:fix`: Corrige vulnerabilidades de dependências.
