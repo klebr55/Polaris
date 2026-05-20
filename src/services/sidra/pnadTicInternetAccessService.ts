@@ -1,5 +1,3 @@
-import type { PnadTicApiResponse, PnadTicDimension, PnadTicRawRow } from "../../types/ibge";
-
 export interface InternetAccessPoint {
   period: string;
   value: number;
@@ -27,21 +25,48 @@ interface SidraAdapter<TRaw, TSimplified> {
   adapt(data: TRaw): TSimplified;
 }
 
-const SIDRA_BASE_URL = "https://apisidra.ibge.gov.br/values";
-const SIDRA_TABLE_ID = "7127";
-const SIDRA_VARIABLE_ID = "4099";
-const SIDRA_TERRITORY_LEVEL = "n3";
+const SIDRA_BASE_URL = "https://servicodados.ibge.gov.br/api/v3/agregados";
+const SIDRA_AGGREGATE_ID = "1220";
+const SIDRA_VARIABLE_ID = "2584";
+const SIDRA_TERRITORY_LEVEL = "N3";
 const SIDRA_TERRITORY_CODE = "51";
 const SIDRA_PERIOD = "all";
 const SIDRA_REVALIDATE_SECONDS = 60 * 60 * 24 * 7;
-const INDICATOR_LABEL = "Proporcao de domicilios com acesso a internet";
+const INDICATOR_LABEL =
+  "Percentual de domicilios particulares permanentes com acesso a internet";
 
-class PnadTicInternetAccessAdapter
-  implements SidraAdapter<PnadTicApiResponse, InternetAccessSeries>
-{
+interface AggregateLocalidade {
+  id: string;
+  nome: string;
+  nivel?: { id: string; nome: string };
+}
+
+interface AggregateSeriesEntry {
+  localidade: AggregateLocalidade;
+  serie: Record<string, string>;
+}
+
+interface AggregateResult {
+  classificacoes: unknown[];
+  series: AggregateSeriesEntry[];
+}
+
+interface AggregateVariableResponse {
+  id: string;
+  variavel: string;
+  unidade: string;
+  resultados: AggregateResult[];
+}
+
+type SidraAggregateResponse = AggregateVariableResponse[];
+
+class PnadTicInternetAccessAdapter implements SidraAdapter<
+  SidraAggregateResponse,
+  InternetAccessSeries
+> {
   constructor(private readonly indicatorLabel: string) {}
 
-  adapt(rows: PnadTicApiResponse): InternetAccessSeries {
+  adapt(rows: SidraAggregateResponse): InternetAccessSeries {
     if (!Array.isArray(rows)) {
       throw new SidraServiceError(
         "invalid-response",
@@ -53,31 +78,36 @@ class PnadTicInternetAccessAdapter
       throw new SidraServiceError("empty-response", "Resposta SIDRA vazia.");
     }
 
-    const dataRows = isHeaderRow(rows[0]) ? rows.slice(1) : rows;
+    const variable = rows[0];
+    const results = variable?.resultados ?? [];
+    const seriesEntry = results[0]?.series?.[0];
 
-    if (dataRows.length === 0) {
+    if (!seriesEntry || !seriesEntry.serie) {
       throw new SidraServiceError("empty-response", "Resposta SIDRA vazia.");
     }
 
-    const firstRow = dataRows[0];
-    const territory = { code: firstRow.NC, name: firstRow.NN };
-    const unit = firstRow.UM ?? null;
+    const territory = {
+      code: seriesEntry.localidade.id,
+      name: seriesEntry.localidade.nome,
+    };
+    const unit = variable.unidade ?? null;
+    const indicator = variable.variavel || this.indicatorLabel;
 
-    const pointsWithSort = dataRows
-      .map((row) => toChartPoint(row))
-      .filter((point): point is ChartPointWithSortKey => point !== null)
-      .sort((a, b) => a.sortKey.localeCompare(b.sortKey))
-      .map(({ sortKey, ...point }) => point);
+    const pointsWithSort = Object.entries(seriesEntry.serie)
+      .map(([period, value]) => toChartPointFromSeries(period, value))
+      .filter((point): point is ChartPointWithSortKey => point !== null);
 
-    if (pointsWithSort.length === 0) {
+    const sanitizedPoints = sanitizeSeries(pointsWithSort);
+
+    if (sanitizedPoints.length === 0) {
       throw new SidraServiceError("no-data", "Sem dados validos do SIDRA.");
     }
 
     return {
-      indicator: this.indicatorLabel,
+      indicator,
       territory,
       unit,
-      points: pointsWithSort,
+      points: sanitizedPoints,
     };
   }
 }
@@ -86,75 +116,121 @@ interface ChartPointWithSortKey extends InternetAccessPoint {
   sortKey: string;
 }
 
-function isHeaderRow(row: PnadTicRawRow): boolean {
-  const value = row.V?.toLowerCase();
-  return value === "valor";
-}
-
-function extractDimensions(row: PnadTicRawRow): PnadTicDimension[] {
-  const map = new Map<number, { code?: string; name?: string }>();
-
-  Object.entries(row).forEach(([key, value]) => {
-    if (!value) {
-      return;
-    }
-
-    const match = /^D(\d+)([CN])$/.exec(key);
-    if (!match) {
-      return;
-    }
-
-    const index = Number(match[1]);
-    const entry = map.get(index) ?? {};
-
-    if (match[2] === "C") {
-      entry.code = value;
-    } else {
-      entry.name = value;
-    }
-
-    map.set(index, entry);
-  });
-
-  return Array.from(map.entries())
-    .sort(([a], [b]) => a - b)
-    .map(([, value]) => ({
-      code: value.code ?? "",
-      name: value.name ?? value.code ?? "",
-    }))
-    .filter((dimension) => dimension.code || dimension.name);
-}
-
 function parseSidraNumber(value: string): number | null {
-  const normalized = value.replace(/\./g, "").replace(",", ".");
+  const trimmed = value.trim();
+  if (!trimmed || trimmed === ".." || trimmed === "..." || trimmed === "X") {
+    return null;
+  }
+
+  let normalized = trimmed;
+
+  if (normalized.includes(",") && normalized.includes(".")) {
+    normalized = normalized.replace(/\./g, "").replace(",", ".");
+  } else if (normalized.includes(",")) {
+    normalized = normalized.replace(",", ".");
+  } else if (/^\d{1,3}(\.\d{3})+$/.test(normalized)) {
+    normalized = normalized.replace(/\./g, "");
+  }
+
   const parsed = Number(normalized);
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-function toChartPoint(row: PnadTicRawRow): ChartPointWithSortKey | null {
-  const value = parseSidraNumber(row.V ?? "");
+function toChartPointFromSeries(
+  period: string,
+  rawValue: string,
+): ChartPointWithSortKey | null {
+  const value = parseSidraNumber(rawValue);
   if (value === null) {
     return null;
   }
 
-  const dimensions = extractDimensions(row);
-  const period = dimensions[0];
-  const periodLabel = period?.name || period?.code;
-  const periodSortKey = period?.code || period?.name;
-
-  if (!periodLabel || !periodSortKey) {
+  if (!period) {
     return null;
   }
 
   return {
-    period: periodLabel,
+    period,
     value,
-    sortKey: periodSortKey,
+    sortKey: period,
   };
 }
 
+function parseYear(value: string): number | null {
+  const normalized = value.replace(/[^0-9]/g, "");
+  if (normalized.length < 4) {
+    return null;
+  }
+
+  const year = Number(normalized.slice(0, 4));
+  if (!Number.isFinite(year) || year < 1900 || year > 2200) {
+    return null;
+  }
+
+  return year;
+}
+
+function roundTo(value: number, decimals = 2): number {
+  const factor = 10 ** decimals;
+  return Math.round(value * factor) / factor;
+}
+
+function sanitizeSeries(
+  points: ChartPointWithSortKey[],
+): InternetAccessPoint[] {
+  const byYear = new Map<number, number>();
+
+  points.forEach((point) => {
+    if (!Number.isFinite(point.value)) {
+      return;
+    }
+
+    const year = parseYear(point.sortKey) ?? parseYear(point.period);
+    if (year === null) {
+      return;
+    }
+
+    byYear.set(year, point.value);
+  });
+
+  const years = Array.from(byYear.keys()).sort((a, b) => a - b);
+  if (years.length === 0) {
+    return [];
+  }
+
+  const sanitized: InternetAccessPoint[] = [];
+
+  years.forEach((year, index) => {
+    const value = byYear.get(year) ?? 0;
+
+    if (index === 0) {
+      sanitized.push({ period: String(year), value });
+      return;
+    }
+
+    const previousYear = years[index - 1];
+    const previousValue = byYear.get(previousYear) ?? value;
+    const gap = year - previousYear;
+
+    if (gap > 1) {
+      for (let step = 1; step < gap; step += 1) {
+        const interpolated =
+          previousValue + (value - previousValue) * (step / gap);
+        sanitized.push({
+          period: String(previousYear + step),
+          value: roundTo(interpolated),
+        });
+      }
+    }
+
+    sanitized.push({ period: String(year), value });
+  });
+
+  return sanitized;
+}
+
 function buildSidraUrl(): string {
-  return `${SIDRA_BASE_URL}/t/${SIDRA_TABLE_ID}/${SIDRA_TERRITORY_LEVEL}/${SIDRA_TERRITORY_CODE}/v/${SIDRA_VARIABLE_ID}/p/${SIDRA_PERIOD}`;
+  return `${SIDRA_BASE_URL}/${SIDRA_AGGREGATE_ID}/periodos/${SIDRA_PERIOD}/variaveis/${SIDRA_VARIABLE_ID}?localidades=${SIDRA_TERRITORY_LEVEL}[${SIDRA_TERRITORY_CODE}]`;
 }
 
 export async function fetchPnadTicInternetAccessMatoGrosso(): Promise<InternetAccessSeries> {
@@ -173,7 +249,7 @@ export async function fetchPnadTicInternetAccessMatoGrosso(): Promise<InternetAc
       );
     }
 
-    const payload = (await response.json()) as PnadTicApiResponse;
+    const payload = (await response.json()) as SidraAggregateResponse;
     const adapter = new PnadTicInternetAccessAdapter(INDICATOR_LABEL);
 
     return adapter.adapt(payload);

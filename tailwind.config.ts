@@ -7,6 +7,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        "polaris-blue": "rgb(var(--color-polaris-blue) / <alpha-value>)",
         navy: {
           950: "#0A192F",
         },
@@ -24,7 +25,13 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ["Geist Sans", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        sans: [
+          "Geist Sans",
+          "Inter",
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+        ],
       },
       fontSize: {
         xs: ["0.75rem", { lineHeight: "1.25rem" }],
