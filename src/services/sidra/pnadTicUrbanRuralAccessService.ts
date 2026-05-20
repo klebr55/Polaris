@@ -48,10 +48,10 @@ export async function fetchUrbanRuralAccess(): Promise<UrbanRuralAccess> {
 
     for (const result of results) {
       const isUrbana = result.classificacoes.some(
-        (c) => c.id === "1" && Object.keys(c.categoria).includes("1")
+        (c: any) => c.id === "1" && Object.keys(c.categoria || {}).includes("1")
       );
       const isRural = result.classificacoes.some(
-        (c) => c.id === "1" && Object.keys(c.categoria).includes("2")
+        (c: any) => c.id === "1" && Object.keys(c.categoria || {}).includes("2")
       );
 
       const seriesEntry = result.series?.[0]?.serie;
