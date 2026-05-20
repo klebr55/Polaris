@@ -16,17 +16,13 @@ import {
   type SidraAggregateResponse,
 } from "./common";
 
-const SIDRA_BASE_URL = "https://servicodados.ibge.gov.br/api/v3/agregados";
-const SIDRA_AGGREGATE_ID = "7127";
-const SIDRA_VARIABLE_ID = "3593";
-const SIDRA_TERRITORY_LEVEL = "N3";
-const SIDRA_TERRITORY_CODE = "51";
-const SIDRA_PERIOD = "all";
-const SIDRA_REVALIDATE_SECONDS = 60 * 60 * 24 * 7;
-const INDICATOR_LABEL = "Numero medio de anos de estudo das pessoas de 15 anos ou mais";
-
-
-
+const SIDRA_BASE_URL = process.env.SIDRA_BASE_URL || "https://servicodados.ibge.gov.br/api/v3/agregados";
+const SIDRA_AGGREGATE_ID = process.env.SIDRA_EDUCATION_AGGREGATE_ID || "7328";
+const SIDRA_VARIABLE_ID = process.env.SIDRA_EDUCATION_VARIABLE_ID || "10648";
+const SIDRA_TERRITORY_LEVEL = process.env.SIDRA_TERRITORY_LEVEL || "N3";
+const SIDRA_TERRITORY_CODE = process.env.SIDRA_TERRITORY_CODE || "51";
+const SIDRA_PERIOD = process.env.SIDRA_PERIOD || "all";
+const INDICATOR_LABEL = "Percentual de estudantes que utilizaram a internet";
 
 class PnadTicEducationAccessAdapter implements SidraAdapter<
   SidraAggregateResponse,
@@ -198,7 +194,7 @@ function sanitizeSeries(
 }
 
 function buildSidraUrl(): string {
-  return `${SIDRA_BASE_URL}/${SIDRA_AGGREGATE_ID}/periodos/${SIDRA_PERIOD}/variaveis/${SIDRA_VARIABLE_ID}?localidades=${SIDRA_TERRITORY_LEVEL}[${SIDRA_TERRITORY_CODE}]&classificacao=58[2795]|86[95251]`;
+  return `${SIDRA_BASE_URL}/${SIDRA_AGGREGATE_ID}/periodos/${SIDRA_PERIOD}/variaveis/${SIDRA_VARIABLE_ID}?localidades=${SIDRA_TERRITORY_LEVEL}[${SIDRA_TERRITORY_CODE}]&classificacao=426[11323]|422[48578]`;
 }
 
 export async function fetchPnadTicEducationAccessMatoGrosso(): Promise<EducationAccessSeries> {
@@ -207,7 +203,7 @@ export async function fetchPnadTicEducationAccessMatoGrosso(): Promise<Education
   try {
     const response = await fetch(url, {
       headers: { Accept: "application/json" },
-      next: { revalidate: SIDRA_REVALIDATE_SECONDS },
+      cache: "no-store",
     });
 
     if (!response.ok) {

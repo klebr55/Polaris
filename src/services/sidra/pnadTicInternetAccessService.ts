@@ -16,13 +16,13 @@ import {
   type SidraAggregateResponse,
 } from "./common";
 
-const SIDRA_BASE_URL = "https://servicodados.ibge.gov.br/api/v3/agregados";
-const SIDRA_AGGREGATE_ID = "1220";
-const SIDRA_VARIABLE_ID = "2584";
-const SIDRA_TERRITORY_LEVEL = "N3";
-const SIDRA_TERRITORY_CODE = "51";
-const SIDRA_PERIOD = "all";
-const SIDRA_REVALIDATE_SECONDS = 60 * 60 * 24 * 7;
+const SIDRA_BASE_URL = process.env.SIDRA_BASE_URL || "https://servicodados.ibge.gov.br/api/v3/agregados";
+const SIDRA_AGGREGATE_ID = process.env.SIDRA_INTERNET_AGGREGATE_ID || "1220";
+const SIDRA_VARIABLE_ID = process.env.SIDRA_INTERNET_VARIABLE_ID || "2584";
+const SIDRA_TERRITORY_LEVEL = process.env.SIDRA_TERRITORY_LEVEL || "N3";
+const SIDRA_TERRITORY_CODE = process.env.SIDRA_TERRITORY_CODE || "51";
+const SIDRA_PERIOD = process.env.SIDRA_PERIOD || "all";
+const SIDRA_REVALIDATE_SECONDS = Number(process.env.SIDRA_REVALIDATE_SECONDS) || 60 * 60 * 24 * 7;
 const INDICATOR_LABEL =
   "Percentual de domicilios particulares permanentes com acesso a internet";
 
