@@ -7,6 +7,7 @@ import InternetAccessCard from "../components/modules/InternetAccessCard";
 import InternetAccessSkeleton from "../components/modules/InternetAccessSkeleton";
 import LegacyFooter from "../components/modules/LegacyFooter";
 import ServiceErrorFallback from "../components/modules/ServiceErrorFallback";
+import StoryBlock from "../components/modules/StoryBlock";
 import {
   fetchPnadTicInternetAccessMatoGrosso,
   fetchPnadTicEducationAccessMatoGrosso,
@@ -57,16 +58,28 @@ async function ComparisonSectionData() {
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col gap-32 pb-0 scroll-smooth">
+    <main className="flex min-h-screen flex-col gap-24 pb-0 scroll-smooth sm:gap-32">
       <HeroSection>
         <Suspense fallback={<InternetAccessSkeleton />}>
           <InternetAccessCardData />
         </Suspense>
       </HeroSection>
 
+      <StoryBlock
+        eyebrow="Ato 2 — A Divisao"
+        headline="903 mil km² separam o campo da cidade. A internet encurta essa distancia."
+        body="Mato Grosso e o terceiro maior estado do Brasil. Em suas cidades, a fibra otica avanca rapido. Nas fazendas e comunidades rurais, o cenario e outro. Os dados da PNAD TIC revelam a dimensao exata dessa fratura digital — e como ela vem se fechando, ano apos ano."
+      />
+
       <Suspense fallback={<ComparisonSection />}>
         <ComparisonSectionData />
       </Suspense>
+
+      <StoryBlock
+        eyebrow="Ato 3 — A Transformacao"
+        headline="Quando um estudante se conecta, o futuro de uma geracao inteira muda."
+        body="A conectividade digital entre estudantes mato-grossenses nao e apenas uma estatistica — e o indicador que separa o acesso ao conhecimento do isolamento informacional. Cada ponto percentual neste grafico representa milhares de jovens que passaram a ter acesso a pesquisa, ensino remoto e oportunidades antes inalcancaveis."
+      />
 
       <Suspense fallback={<EducationSkeleton />}>
         <EducationSectionData />
@@ -76,4 +89,3 @@ export default function HomePage() {
     </main>
   );
 }
-

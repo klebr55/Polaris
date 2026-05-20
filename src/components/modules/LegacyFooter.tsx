@@ -3,117 +3,151 @@
 import { motion, Variants } from "framer-motion";
 
 const SQUAD_MEMBERS = [
-  { name: "Vinicius", role: "Arquiteto de Dados" },
-  { name: "Kleber", role: "Engenheiro de Interface" },
-  { name: "Rafael", role: "Engenheiro de Serviços" },
-  { name: "Thiago", role: "Analista de Visualização" },
+  { name: "Kleber Vinicius", role: "Tech Lead & Software Engineer" },
+  { name: "Luiz Fernando", role: "Product/Data" },
+  { name: "Thor Ribeiro", role: "UX/Storytelling" },
+  { name: "Thaiane Vitoria", role: "QA/Documentation" },
 ];
 
 const containerVariants: Variants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.3,
+      staggerChildren: 0.15,
+      delayChildren: 0.4,
     },
   },
 };
 
 const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
+  hidden: { opacity: 0, y: 24, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.7, ease: "easeOut" as const },
+  },
 };
 
 export default function LegacyFooter() {
   return (
-    <footer className="relative px-6 pb-24 pt-16">
-      <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent via-cyan-950/10 to-slate-950/60" />
+    <footer className="relative mt-16 overflow-hidden px-6 pb-20 pt-32">
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-[#020617] to-[#020617]" />
 
-      <motion.div
-        initial={{ opacity: 0, y: 32 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.0, ease: "easeOut" }}
-        viewport={{ once: true, margin: "-15%" }}
-        className="relative mx-auto w-full max-w-6xl"
-      >
-        <div className="relative overflow-hidden rounded-4xl border border-white/10 bg-white/5 px-8 py-16 shadow-[0_32px_96px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
-          <div className="pointer-events-none absolute inset-0 rounded-4xl bg-linear-to-br from-cyan-500/8 via-transparent to-transparent" />
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/2 top-0 h-px w-[60%] -translate-x-1/2 bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+        <div className="absolute -left-20 top-20 h-[500px] w-[500px] rounded-full bg-cyan-900/[0.06] blur-[150px]" />
+        <div className="absolute -right-20 bottom-20 h-[400px] w-[400px] rounded-full bg-blue-900/[0.05] blur-[130px]" />
+      </div>
 
-          <div className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-cyan-500/6 blur-[120px]" />
-          <div className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-sky-500/8 blur-[100px]" />
+      <div className="relative mx-auto w-full max-w-5xl">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          viewport={{ once: true, margin: "-10%" }}
+          className="flex flex-col items-center gap-6 text-center"
+        >
+          <motion.div
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+            viewport={{ once: true }}
+            className="h-px w-24 bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent"
+          />
 
-          <div className="relative flex flex-col items-center gap-16">
+          <span className="text-[0.6rem] font-medium uppercase tracking-[0.7em] text-cyan-500/50">
+            Missao concluida
+          </span>
+
+          <h2 className="bg-gradient-to-b from-white via-slate-200 to-slate-500 bg-clip-text text-5xl font-extrabold leading-none tracking-[-0.05em] text-transparent sm:text-6xl lg:text-7xl">
+            Polaris
+          </h2>
+
+          <p className="max-w-sm text-base leading-relaxed text-slate-500 sm:text-lg">
+            Do coracao de Mato Grosso para o mundo.
+          </p>
+        </motion.div>
+
+        <div className="mx-auto my-14 h-px w-full max-w-md bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
+
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-5%" }}
+          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+        >
+          {SQUAD_MEMBERS.map((member) => (
             <motion.div
-              initial={{ opacity: 0, scale: 0.92 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.1, ease: "easeOut" }}
-              viewport={{ once: true }}
-              className="flex flex-col items-center gap-5 text-center"
+              key={member.name}
+              variants={itemVariants}
+              className="group relative flex flex-col items-center gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] px-5 py-7 text-center transition-all duration-400 hover:-translate-y-1.5 hover:border-cyan-400/20 hover:bg-white/[0.05]"
             >
-              <div className="flex items-center gap-3">
-                <div className="h-px w-16 bg-linear-to-r from-transparent to-cyan-500/60" />
-                <span className="text-[0.65rem] uppercase tracking-[0.6em] text-slate-500">
-                  Missão concluída
-                </span>
-                <div className="h-px w-16 bg-linear-to-l from-transparent to-cyan-500/60" />
+              <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-400 group-hover:opacity-100">
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-cyan-500/[0.04] to-transparent" />
+                <div className="absolute inset-x-0 -top-px mx-auto h-px w-3/4 bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent" />
               </div>
 
-              <h2 className="text-balance bg-linear-to-br from-white via-slate-200 to-slate-400 bg-clip-text text-4xl font-extrabold leading-tight tracking-[-0.04em] text-transparent sm:text-5xl lg:text-6xl">
-                Polaris
-              </h2>
-
-              <p className="max-w-md text-base text-slate-400 sm:text-lg">
-                Do coração de Mato Grosso para o mundo
-              </p>
-            </motion.div>
-
-            <div className="h-px w-full bg-linear-to-r from-transparent via-white/10 to-transparent" />
-
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-10%" }}
-              className="grid w-full gap-4 sm:grid-cols-2 lg:grid-cols-4"
-            >
-              {SQUAD_MEMBERS.map((member) => (
-                <motion.div
-                  key={member.name}
-                  variants={itemVariants}
-                  className="group relative flex flex-col items-center gap-2 rounded-2xl border border-white/8 bg-white/5 px-6 py-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/10 hover:shadow-[0_12px_40px_rgba(0,0,0,0.4)]"
-                >
-                  <div className="pointer-events-none absolute inset-0 rounded-2xl bg-linear-to-b from-white/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-                  <div className="relative flex h-11 w-11 items-center justify-center rounded-full border border-cyan-500/30 bg-cyan-500/10">
-                    <span className="text-sm font-bold text-cyan-300">
-                      {member.name.charAt(0)}
-                    </span>
-                    <div className="absolute inset-0 rounded-full bg-cyan-500/20 blur-md opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                  </div>
-
-                  <span className="text-sm font-semibold text-white">{member.name}</span>
-                  <span className="text-[0.7rem] uppercase tracking-[0.2em] text-slate-500">
-                    {member.role}
-                  </span>
-                </motion.div>
-              ))}
-            </motion.div>
-
-            <div className="flex flex-col items-center gap-3">
-              <div className="flex items-center gap-3">
-                <div className="h-px w-8 bg-linear-to-r from-transparent to-white/20" />
-                <span className="text-[0.6rem] uppercase tracking-[0.5em] text-slate-600">
-                  Semana 04 · 2026
+              <div className="relative flex h-12 w-12 items-center justify-center rounded-full border border-cyan-500/20 bg-cyan-500/[0.06] transition-all duration-300 group-hover:border-cyan-400/40 group-hover:bg-cyan-500/[0.12] group-hover:shadow-[0_0_24px_rgba(34,211,238,0.15)]">
+                <span className="text-sm font-bold text-cyan-400/80 transition-colors duration-300 group-hover:text-cyan-300">
+                  {member.name.charAt(0)}
                 </span>
-                <div className="h-px w-8 bg-linear-to-l from-transparent to-white/20" />
               </div>
-              <p className="text-[0.65rem] text-slate-700">
-                Dados públicos · IBGE SIDRA · PNAD Contínua TIC
-              </p>
-            </div>
+
+              <div className="relative flex flex-col items-center gap-1">
+                <span className="text-sm font-semibold text-slate-200 transition-all duration-300 group-hover:text-white group-hover:[text-shadow:0_0_20px_rgba(34,211,238,0.3)]">
+                  {member.name}
+                </span>
+                <span className="text-[0.65rem] uppercase tracking-[0.25em] text-slate-600 transition-colors duration-300 group-hover:text-slate-400">
+                  {member.role}
+                </span>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.6 }}
+          viewport={{ once: true }}
+          className="mt-16 flex flex-col items-center gap-4"
+        >
+          <div className="flex items-center gap-4">
+            <div className="h-px w-10 bg-gradient-to-r from-transparent to-white/10" />
+            <span className="text-[0.55rem] uppercase tracking-[0.6em] text-slate-700">
+              Semana 04 · 2026
+            </span>
+            <div className="h-px w-10 bg-gradient-to-l from-transparent to-white/10" />
           </div>
-        </div>
-      </motion.div>
+
+          <p className="text-[0.6rem] tracking-wider text-slate-800">
+            Dados publicos · IBGE SIDRA · PNAD Continua TIC
+          </p>
+
+          <div className="mt-2 flex h-5 w-5 items-center justify-center">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 20 20"
+              fill="none"
+            >
+              <path
+                d="M10 2L12.09 7.26L18 8.27L13.82 12.14L14.94 18L10 15.27L5.06 18L6.18 12.14L2 8.27L7.91 7.26L10 2Z"
+                fill="url(#footer-star)"
+                opacity="0.3"
+              />
+              <defs>
+                <linearGradient id="footer-star" x1="10" y1="2" x2="10" y2="18">
+                  <stop offset="0%" stopColor="#22D3EE" />
+                  <stop offset="100%" stopColor="#0891B2" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+        </motion.div>
+      </div>
     </footer>
   );
 }
