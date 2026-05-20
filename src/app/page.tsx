@@ -1,4 +1,4 @@
-import { Suspense, use } from "react";
+import { Suspense } from "react";
 import ComparisonSection from "../components/modules/ComparisonSection";
 import EducationSection from "../components/modules/EducationSection";
 import EducationSkeleton from "../components/modules/EducationSkeleton";
@@ -6,19 +6,38 @@ import HeroSection from "../components/modules/HeroSection";
 import InternetAccessCard from "../components/modules/InternetAccessCard";
 import InternetAccessSkeleton from "../components/modules/InternetAccessSkeleton";
 import LegacyFooter from "../components/modules/LegacyFooter";
+import ServiceErrorFallback from "../components/modules/ServiceErrorFallback";
 import {
   fetchPnadTicInternetAccessMatoGrosso,
   fetchPnadTicEducationAccessMatoGrosso,
 } from "../services/sidra";
 
-function InternetAccessCardData() {
-  const series = use(fetchPnadTicInternetAccessMatoGrosso());
-  return <InternetAccessCard series={series} />;
+async function InternetAccessCardData() {
+  try {
+    const series = await fetchPnadTicInternetAccessMatoGrosso();
+    return <InternetAccessCard series={series} />;
+  } catch {
+    return (
+      <ServiceErrorFallback
+        title="Dados de Internet indisponiveis"
+        message="O IBGE SIDRA nao respondeu a tempo. Os dados serao carregados automaticamente quando o servico retornar."
+      />
+    );
+  }
 }
 
-function EducationSectionData() {
-  const series = use(fetchPnadTicEducationAccessMatoGrosso());
-  return <EducationSection series={series} />;
+async function EducationSectionData() {
+  try {
+    const series = await fetchPnadTicEducationAccessMatoGrosso();
+    return <EducationSection series={series} />;
+  } catch {
+    return (
+      <ServiceErrorFallback
+        title="Dados de Educacao indisponiveis"
+        message="O IBGE SIDRA nao respondeu a tempo. Os dados serao carregados automaticamente quando o servico retornar."
+      />
+    );
+  }
 }
 
 export default function HomePage() {
@@ -40,3 +59,4 @@ export default function HomePage() {
     </main>
   );
 }
+

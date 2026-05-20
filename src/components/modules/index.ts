@@ -5,3 +5,4 @@ export { default as HeroSection } from "./HeroSection";
 export { default as InternetAccessCard } from "./InternetAccessCard";
 export { default as InternetAccessSkeleton } from "./InternetAccessSkeleton";
 export { default as LegacyFooter } from "./LegacyFooter";
+export { default as ServiceErrorFallback } from "./ServiceErrorFallback";
