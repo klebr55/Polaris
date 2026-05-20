@@ -10,20 +10,11 @@ export interface InternetAccessSeries {
   points: InternetAccessPoint[];
 }
 
-export class SidraServiceError extends Error {
-  constructor(
-    public readonly code: string,
-    message: string,
-    public readonly cause?: unknown,
-  ) {
-    super(message, { cause });
-    this.name = "SidraServiceError";
-  }
-}
-
-interface SidraAdapter<TRaw, TSimplified> {
-  adapt(data: TRaw): TSimplified;
-}
+import {
+  SidraServiceError,
+  type SidraAdapter,
+  type SidraAggregateResponse,
+} from "./common";
 
 const SIDRA_BASE_URL = "https://servicodados.ibge.gov.br/api/v3/agregados";
 const SIDRA_AGGREGATE_ID = "1220";
@@ -35,30 +26,7 @@ const SIDRA_REVALIDATE_SECONDS = 60 * 60 * 24 * 7;
 const INDICATOR_LABEL =
   "Percentual de domicilios particulares permanentes com acesso a internet";
 
-interface AggregateLocalidade {
-  id: string;
-  nome: string;
-  nivel?: { id: string; nome: string };
-}
 
-interface AggregateSeriesEntry {
-  localidade: AggregateLocalidade;
-  serie: Record<string, string>;
-}
-
-interface AggregateResult {
-  classificacoes: unknown[];
-  series: AggregateSeriesEntry[];
-}
-
-interface AggregateVariableResponse {
-  id: string;
-  variavel: string;
-  unidade: string;
-  resultados: AggregateResult[];
-}
-
-type SidraAggregateResponse = AggregateVariableResponse[];
 
 class PnadTicInternetAccessAdapter implements SidraAdapter<
   SidraAggregateResponse,
