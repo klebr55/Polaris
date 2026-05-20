@@ -3,3 +3,4 @@ export type { InternetAccessPoint, InternetAccessSeries } from "./pnadTicInterne
 export { fetchPnadTicInternetAccessMatoGrosso } from "./pnadTicInternetAccessService";
 export type { EducationAccessPoint, EducationAccessSeries } from "./pnadTicEducationAccessService";
 export { fetchPnadTicEducationAccessMatoGrosso } from "./pnadTicEducationAccessService";
+export { fetchUrbanRuralAccess } from "./pnadTicUrbanRuralAccessService";

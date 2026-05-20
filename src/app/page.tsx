@@ -10,6 +10,7 @@ import ServiceErrorFallback from "../components/modules/ServiceErrorFallback";
 import {
   fetchPnadTicInternetAccessMatoGrosso,
   fetchPnadTicEducationAccessMatoGrosso,
+  fetchUrbanRuralAccess,
 } from "../services/sidra";
 
 async function InternetAccessCardData() {
@@ -40,6 +41,20 @@ async function EducationSectionData() {
   }
 }
 
+async function ComparisonSectionData() {
+  try {
+    const data = await fetchUrbanRuralAccess();
+    return (
+      <ComparisonSection
+        urbanPercent={data.urbanPercent}
+        ruralPercent={data.ruralPercent}
+      />
+    );
+  } catch {
+    return <ComparisonSection />;
+  }
+}
+
 export default function HomePage() {
   return (
     <main className="flex min-h-screen flex-col gap-32 pb-0 scroll-smooth">
@@ -49,7 +64,9 @@ export default function HomePage() {
         </Suspense>
       </HeroSection>
 
-      <ComparisonSection />
+      <Suspense fallback={<ComparisonSection />}>
+        <ComparisonSectionData />
+      </Suspense>
 
       <Suspense fallback={<EducationSkeleton />}>
         <EducationSectionData />
