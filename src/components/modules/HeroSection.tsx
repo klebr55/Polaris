@@ -112,11 +112,15 @@ export default function HeroSection({ children }: HeroSectionProps) {
         <motion.figure
           initial={{ opacity: 0, y: 28, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
+          whileHover={{ y: -4, scale: 1.01 }}
           transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-          className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.03] px-6 py-8 shadow-[0_8px_60px_rgba(0,0,0,0.4)] ring-1 ring-inset ring-white/[0.05] backdrop-blur-2xl transition-all duration-500 ease-out hover:border-white/[0.15] hover:bg-white/[0.06] hover:shadow-[0_20px_70px_rgba(8,145,178,0.12)]"
+          className="group relative overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.03] px-6 py-8 shadow-[0_8px_60px_rgba(0,0,0,0.4)] ring-1 ring-inset ring-white/[0.05] backdrop-blur-2xl"
           tabIndex={0}
         >
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-cyan-500/[0.03] via-transparent to-blue-500/[0.02]" />
+          <div className="pointer-events-none absolute inset-0 rounded-3xl bg-white/[0.03] opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100" />
+          <div className="pointer-events-none absolute inset-0 rounded-3xl border border-white/[0.07] opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100" />
+          <div className="pointer-events-none absolute inset-0 rounded-3xl shadow-[0_20px_70px_rgba(8,145,178,0.12)] opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100" />
           <div className="relative">{children}</div>
         </motion.figure>
       </motion.div>

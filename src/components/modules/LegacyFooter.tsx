@@ -6,7 +6,8 @@ const SQUAD_MEMBERS = [
   { name: "Kleber Vinicius", role: "Tech Lead & Software Engineer" },
   { name: "Luiz Fernando", role: "Product/Data" },
   { name: "Thor Ribeiro", role: "UX/Storytelling" },
-  { name: "Thaiane Vitoria", role: "QA/Documentation" },
+  { name: "Thaiane Vitoria", role: "Documentation" },
+  { name: "Kelmy Adriano", role: "QA Analyst" },
 ];
 
 const containerVariants: Variants = {
@@ -76,17 +77,20 @@ export default function LegacyFooter() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-5%" }}
-          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+          className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
         >
           {SQUAD_MEMBERS.map((member) => (
             <motion.div
               key={member.name}
               variants={itemVariants}
-              className="group relative flex flex-col items-center gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] px-5 py-7 text-center transition-all duration-400 hover:-translate-y-1.5 hover:border-cyan-400/20 hover:bg-white/[0.05]"
+              whileHover={{ y: -6 }}
+              className="group relative flex flex-col items-center gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] px-5 py-7 text-center"
             >
-              <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-400 group-hover:opacity-100">
+              <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-400 ease-out group-hover:opacity-100">
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-cyan-500/[0.04] to-transparent" />
                 <div className="absolute inset-x-0 -top-px mx-auto h-px w-3/4 bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent" />
+                <div className="absolute inset-0 rounded-2xl border border-cyan-400/20" />
+                <div className="absolute inset-0 rounded-2xl bg-white/[0.03]" />
               </div>
 
               <div className="relative flex h-12 w-12 items-center justify-center rounded-full border border-cyan-500/20 bg-cyan-500/[0.06] transition-all duration-300 group-hover:border-cyan-400/40 group-hover:bg-cyan-500/[0.12] group-hover:shadow-[0_0_24px_rgba(34,211,238,0.15)]">

@@ -16,6 +16,7 @@ import {
 } from "recharts";
 import type { TooltipProps } from "recharts";
 import type { EducationAccessSeries } from "../../services/sidra";
+import type { GsapAnimationConfig } from "../../types/theme";
 
 const formatNumber = new Intl.NumberFormat("pt-BR", {
   maximumFractionDigits: 1,
@@ -58,15 +59,17 @@ function StatCard({ label, value, detail, index }: StatCardProps) {
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4 }}
       transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 * index }}
       viewport={{ once: true, margin: "-10%" }}
-      className="group relative flex flex-col gap-1 rounded-2xl border border-glass-border bg-white/5 px-4 py-3 text-sm transition-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 hover:-translate-y-1 hover:border-white/30 hover:bg-white/10 hover:shadow-[0_14px_32px_rgba(15,23,42,0.45)]"
+      className="group relative flex flex-col gap-1 rounded-2xl border border-glass-border bg-white/5 px-4 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
       tabIndex={0}
     >
-      <div className="pointer-events-none absolute inset-0 rounded-2xl bg-glass-highlight opacity-0 transition-opacity duration-300 group-hover:opacity-40" />
-      <span className="text-xs uppercase tracking-[0.2em] text-slate-400">{label}</span>
-      <span className="text-lg font-semibold text-white">{value}</span>
-      <span className="text-xs text-slate-300">{detail}</span>
+      <div className="pointer-events-none absolute inset-0 rounded-2xl bg-white/[0.05] opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100" />
+      <div className="pointer-events-none absolute inset-0 rounded-2xl border border-white/20 opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100" />
+      <span className="relative z-10 text-xs uppercase tracking-[0.2em] text-slate-400">{label}</span>
+      <span className="relative z-10 text-lg font-semibold text-white">{value}</span>
+      <span className="relative z-10 text-xs text-slate-300">{detail}</span>
     </motion.div>
   );
 }
@@ -94,11 +97,15 @@ export default function EducationSection({ series }: { series: EducationAccessSe
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
-      gsap.from(chartWrapperRef.current, {
+      const animationConfig: GsapAnimationConfig = {
         opacity: 0,
         x: 40,
         duration: 1.0,
         ease: "power3.out",
+      };
+
+      gsap.from(chartWrapperRef.current, {
+        ...animationConfig,
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top 68%",

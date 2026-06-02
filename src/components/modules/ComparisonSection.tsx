@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import type { GsapAnimationConfig } from "../../types/theme";
 
 interface ComparisonSectionProps {
   urbanPercent?: number;
@@ -38,10 +39,14 @@ export default function ComparisonSection({
         transformOrigin: "left center",
       });
 
-      gsap.to(urbanBarRef.current, {
-        scaleX: urbanScale,
+      const animationConfig: GsapAnimationConfig = {
         duration: 1.2,
         ease: "power3.out",
+      };
+
+      gsap.to(urbanBarRef.current, {
+        scaleX: urbanScale,
+        ...animationConfig,
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top 70%",
@@ -50,8 +55,7 @@ export default function ComparisonSection({
 
       gsap.to(ruralBarRef.current, {
         scaleX: ruralScale,
-        duration: 1.2,
-        ease: "power3.out",
+        ...animationConfig,
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top 70%",
