@@ -409,7 +409,8 @@ Os arquivos de teste residem em `/tests`. A configuração está em `vitest.conf
 ## Equipe
 
 | Nome | Papel |
-|---|---|
+| Kleber Vinícius | Tech Lead & Software Engineer |
+| Luiz Fernando | Product/Data |
 | Thor Ribeiro | UX / Storytelling |
 | Thaiane Vitoria | Documentation |
 | Kelmy Adriano | QA Analyst |
@@ -418,7 +419,7 @@ Os arquivos de teste residem em `/tests`. A configuração está em `vitest.conf
 
 <div align="center">
 
-**Polaris** · Semana 04 · 2026  
+**Polaris** · Estado Final da Aplicação · 2026  
 Dados públicos · IBGE SIDRA · PNAD Contínua TIC
 
 *"Transformar dados públicos em narrativa é um ato político. Cada gráfico é uma voz."*
