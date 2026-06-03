@@ -8,4 +8,5 @@ export { default as LegacyFooter } from "./LegacyFooter";
 export { default as Navbar } from "./Navbar";
 export { default as ServiceErrorFallback } from "./ServiceErrorFallback";
 export { default as SmoothScroller } from "./SmoothScroller";
+export { default as PandemicStatsBar } from "./PandemicStatsBar";
 export { default as StoryBlock } from "./StoryBlock";
