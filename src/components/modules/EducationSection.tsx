@@ -128,14 +128,16 @@ export default function EducationSection({ series }: { series: EducationAccessSe
         <div className="pointer-events-none absolute inset-0 rounded-4xl bg-linear-to-br from-cyan-500/5 via-transparent to-transparent" />
 
         <div className="relative flex flex-col gap-4">
-          <span className="text-xs uppercase tracking-[0.5em] text-slate-400">Ato 3</span>
+          <span className="text-xs uppercase tracking-[0.5em] text-slate-400">Ato 3 — O Resgate</span>
           <h2 className="text-3xl font-semibold text-white sm:text-4xl">
-            O Impacto na Educação
+            Uma corrida contra o apagão do futuro.
           </h2>
           <p className="max-w-2xl text-base text-slate-300 sm:text-lg">
-            O acesso à internet entre estudantes de Mato Grosso revela como a
-            conectividade digital se tornou pilar essencial para a equidade
-            educacional no estado.
+            As escolas físicas esvaziaram da noite para o dia. O ensino foi
+            forçado a se tornar remoto — e a internet, a única ponte entre o
+            professor e o aluno. Para os estudantes de Mato Grosso, conectar-se
+            não era uma opção tecnológica: era a única forma de não perder
+            o ano, a formação e o futuro.
           </p>
         </div>
 

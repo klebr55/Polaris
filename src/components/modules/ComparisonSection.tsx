@@ -77,15 +77,17 @@ export default function ComparisonSection({
       >
         <div className="flex flex-col gap-4">
           <span className="text-xs uppercase tracking-[0.5em] text-slate-400">
-            Ato 2
+            Ato 2 — O Abismo
           </span>
           <h2 className="text-3xl font-semibold text-white sm:text-4xl">
-            Urbano vs Rural
+            O campo invisível durante a crise.
           </h2>
           <p className="max-w-2xl text-base text-slate-300 sm:text-lg">
-            O contraste entre centros urbanos e zonas rurais desenha o ritmo de
-            acesso digital em Mato Grosso. As barras revelam a distancia
-            estrutural que ainda molda o territorio.
+            Enquanto os centros urbanos de Mato Grosso migraram rapidamente para
+            o home office, o isolamento revelou um apagão de comunicação nas
+            zonas rurais. A pandemia expôs a urgência de conectar o campo — o
+            coração do agronegócio — a uma infraestrutura digital que, durante a
+            crise, era questão de sobrevivência econômica.
           </p>
         </div>
 

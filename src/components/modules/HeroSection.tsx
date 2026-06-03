@@ -44,7 +44,7 @@ export default function HeroSection({ children }: HeroSectionProps) {
           >
             <span className="inline-block h-px w-8 bg-gradient-to-r from-transparent to-cyan-400" />
             <span className="text-xs font-medium uppercase tracking-[0.4em] text-cyan-400/80">
-              PNAD TIC &mdash; Mato Grosso
+              Ato 1 — O Catalisador &mdash; PNAD TIC / Mato Grosso
             </span>
           </motion.div>
 
@@ -57,15 +57,15 @@ export default function HeroSection({ children }: HeroSectionProps) {
               className="relative z-10 max-w-4xl text-balance text-5xl font-extrabold leading-[1.05] tracking-[-0.04em] sm:text-6xl lg:text-7xl xl:text-8xl"
             >
               <span className="bg-gradient-to-b from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
-                Polaris transforma
+                Quando as portas
               </span>
               <br />
               <span className="bg-gradient-to-r from-cyan-300 via-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                dados publicos
+                se fecharam,
               </span>
               <br />
               <span className="bg-gradient-to-b from-slate-200 to-slate-500 bg-clip-text text-transparent">
-                em arte viva.
+                a tela abriu o mundo.
               </span>
             </motion.h1>
           </div>
@@ -76,9 +76,9 @@ export default function HeroSection({ children }: HeroSectionProps) {
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
             className="max-w-xl text-lg leading-relaxed text-slate-400 sm:text-xl"
           >
-            Uma experiencia de data storytelling que revela o crescimento
-            tecnologico de Mato Grosso com rigor analitico e sensibilidade
-            visual.
+            O lockdown transformou a internet de luxo a questão de sobrevivência.
+            Os dados do IBGE mostram como Mato Grosso respondeu — e a velocidade
+            com que a conectividade se tornou o alicerce de uma nova realidade.
           </motion.p>
 
           <motion.div

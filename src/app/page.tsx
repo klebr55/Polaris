@@ -66,9 +66,9 @@ export default function HomePage() {
       </HeroSection>
 
       <StoryBlock
-        eyebrow="Ato 2 — A Divisao"
-        headline="903 mil km² separam o campo da cidade. A internet encurta essa distancia."
-        body="Mato Grosso e o terceiro maior estado do Brasil. Em suas cidades, a fibra otica avanca rapido. Nas fazendas e comunidades rurais, o cenario e outro. Os dados da PNAD TIC revelam a dimensao exata dessa fratura digital — e como ela vem se fechando, ano apos ano."
+        eyebrow="Ato 2 — O Abismo"
+        headline="O lockdown revelou que nem todo Mato Grosso estava conectado ao mesmo mundo."
+        body="Quando o isolamento social começou, as cidades migraram para o home office em dias. Nas zonas rurais, o silencio foi outro: sem conectividade, produtores, famílias e comunidades ficaram à margem da economia e da informação. A pandemia não criou esse abismo — ela apenas o iluminou com uma crudeza impossivel de ignorar."
       />
 
       <Suspense fallback={<ComparisonSection />}>
@@ -76,9 +76,9 @@ export default function HomePage() {
       </Suspense>
 
       <StoryBlock
-        eyebrow="Ato 3 — A Transformacao"
-        headline="Quando um estudante se conecta, o futuro de uma geracao inteira muda."
-        body="A conectividade digital entre estudantes mato-grossenses nao e apenas uma estatistica — e o indicador que separa o acesso ao conhecimento do isolamento informacional. Cada ponto percentual neste grafico representa milhares de jovens que passaram a ter acesso a pesquisa, ensino remoto e oportunidades antes inalcancaveis."
+        eyebrow="Ato 3 — O Resgate"
+        headline="Estudante sem internet em 2020 era estudante sem escola. Sem futuro."
+        body="Com as salas de aula fechadas, a tela se tornou o único ambiente de aprendizado. Mas para milhares de jovens mato-grossenses, a conexão não existia ou era insuficiente. Cada ponto percentual deste gráfico representa uma batalha travada em silencio por alunos e famílias contra o apagão educacional imposto pelo vírus."
       />
 
       <Suspense fallback={<EducationSkeleton />}>
