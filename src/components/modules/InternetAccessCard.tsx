@@ -5,6 +5,7 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  Legend,
   ResponsiveContainer,
   XAxis,
   YAxis,
@@ -65,27 +66,40 @@ export default function InternetAccessCard({
   const deltaLabel = `${delta >= 0 ? "+" : ""}${formatNumber.format(delta)}%`;
 
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
     gsap.registerPlugin(ScrollTrigger);
 
     const timer = setTimeout(() => {
       if (!chartRef.current) return;
-      const path = chartRef.current.querySelector(".recharts-area-area") as SVGPathElement;
-      if (path) {
-        const length = path.getTotalLength();
-        gsap.set(path, { strokeDasharray: length, strokeDashoffset: length });
 
-        gsap.to(path, {
-          strokeDashoffset: 0,
-          duration: 2.5,
-          ease: "power3.inOut",
-          scrollTrigger: {
-            trigger: chartRef.current,
-            start: "top 80%",
-            once: true,
-          },
-        });
+      const path = chartRef.current.querySelector(
+        ".recharts-area-area",
+      ) as SVGPathElement;
+
+      if (!path) return;
+
+      if (prefersReducedMotion) {
+        gsap.set(path, { strokeDasharray: "none", strokeDashoffset: 0 });
+        return;
       }
-    }, 300);
+
+      const length = path.getTotalLength();
+      gsap.set(path, { strokeDasharray: length, strokeDashoffset: length });
+
+      gsap.to(path, {
+        strokeDashoffset: 0,
+        duration: 2.5,
+        ease: "power3.inOut",
+        scrollTrigger: {
+          trigger: chartRef.current,
+          start: "top 80%",
+          once: true,
+        },
+      });
+    }, 750);
 
     return () => clearTimeout(timer);
   }, [series]);
@@ -172,12 +186,30 @@ export default function InternetAccessCard({
               <Area
                 type="monotone"
                 dataKey="value"
+                name="Acesso à internet"
                 stroke="#22D3EE"
                 strokeWidth={2}
                 fill="url(#polaris-area-gradient)"
                 dot={false}
                 activeDot={<ActiveDot />}
                 isAnimationActive={false}
+              />
+              <Legend
+                verticalAlign="top"
+                align="right"
+                wrapperStyle={{ paddingBottom: 8 }}
+                formatter={(value: string) => (
+                  <span
+                    style={{
+                      fontSize: "0.65rem",
+                      letterSpacing: "0.3em",
+                      textTransform: "uppercase",
+                      color: "#94A3B8",
+                    }}
+                  >
+                    {value}
+                  </span>
+                )}
               />
             </AreaChart>
           </ResponsiveContainer>

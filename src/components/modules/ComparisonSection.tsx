@@ -4,62 +4,72 @@ import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import type { GsapAnimationConfig } from "../../types/theme";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+  Legend,
+} from "recharts";
+import type { MatoGrossoDigitalDivideData } from "../../types/digitalDivide";
 
 interface ComparisonSectionProps {
-  urbanPercent?: number;
-  ruralPercent?: number;
+  data: MatoGrossoDigitalDivideData;
 }
 
-const DEFAULT_URBAN = 82.4;
-const DEFAULT_RURAL = 58.1;
-
 const MICRO_STATS = [
-  { value: "1 em 4", label: "produtores rurais sem acesso" },
-  { value: "58,1%", label: "das famílias rurais conectadas" },
-  { value: "2020", label: "quando o gap virou crise" },
+  { value: "Fique em Casa", label: "O estopim do abismo" },
+  { value: "Renda & Local", label: "Fatores de exclusão" },
+  { value: "2020", label: "O ano da ruptura" },
 ];
 
-export default function ComparisonSection({
-  urbanPercent = DEFAULT_URBAN,
-  ruralPercent = DEFAULT_RURAL,
-}: ComparisonSectionProps) {
-  const sectionRef = useRef<HTMLElement | null>(null);
-  const urbanBarRef = useRef<HTMLDivElement | null>(null);
-  const ruralBarRef = useRef<HTMLDivElement | null>(null);
-  const gapBarRef = useRef<HTMLDivElement | null>(null);
-  const heroNumberRef = useRef<HTMLSpanElement | null>(null);
-  const urbanCounterRef = useRef<HTMLSpanElement | null>(null);
-  const ruralCounterRef = useRef<HTMLSpanElement | null>(null);
+export default function ComparisonSection({ data }: ComparisonSectionProps) {
+  const containerRef = useRef<HTMLElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
+  const chartWrapperRef = useRef<HTMLDivElement>(null);
+  const heroNumberRef = useRef<HTMLSpanElement>(null);
 
-  const gap = urbanPercent - ruralPercent;
+  const teleworkRates = data.choqueTrabalhoRemoto.teleworkByRendimento.map(
+    (t) => t.percentualTeletrabalho,
+  );
+  const maxTelework =
+    teleworkRates.length > 0 ? Math.max(...teleworkRates) : 42.5;
+  
+  const apagao = data.realidadeInfraestrutura.percentualDomiciliosSemInternet;
+
+  const gap = maxTelework - apagao;
+
+  const chartData = [
+    {
+      name: "Home Office Urbano",
+      value: maxTelework,
+      fill: "url(#urban-gradient)",
+    },
+    {
+      name: "Apagão Rural",
+      value: apagao,
+      fill: "url(#rural-gradient)",
+    },
+  ];
 
   useEffect(() => {
+    if (!containerRef.current || !textRef.current || !chartWrapperRef.current) return;
+
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
-      // Stagger entrance
-      gsap.from(sectionRef.current.children[0].children, {
-        y: 40,
-        opacity: 0,
-        duration: 1.2,
-        stagger: 0.15,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 75%",
-          once: true,
-        },
-      });
-
       const heroObj = { val: 0 };
       gsap.to(heroObj, {
         val: gap,
-        duration: 1.8,
+        duration: 2,
         ease: "power3.out",
         scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 75%",
+          trigger: containerRef.current,
+          start: "top 60%",
           once: true,
         },
         onUpdate() {
@@ -69,192 +79,59 @@ export default function ComparisonSection({
         },
       });
 
-      const urbanObj = { val: 0 };
-      gsap.to(urbanObj, {
-        val: urbanPercent,
-        duration: 1.4,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 70%",
-          once: true,
-        },
-        onUpdate() {
-          if (urbanCounterRef.current) {
-            urbanCounterRef.current.textContent =
-              urbanObj.val.toFixed(1) + "%";
-          }
-        },
-      });
-
-      const ruralObj = { val: 0 };
-      gsap.to(ruralObj, {
-        val: ruralPercent,
-        duration: 1.4,
-        ease: "power3.out",
-        delay: 0.15,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 70%",
-          once: true,
-        },
-        onUpdate() {
-          if (ruralCounterRef.current) {
-            ruralCounterRef.current.textContent =
-              ruralObj.val.toFixed(1) + "%";
-          }
-        },
-      });
-
-      const barConfig: GsapAnimationConfig = {
-        duration: 1.4,
-        ease: "power3.out",
-      };
-
-      gsap.set([urbanBarRef.current, ruralBarRef.current], {
-        scaleX: 0,
-        transformOrigin: "left center",
-      });
-
-      gsap.to(urbanBarRef.current, {
-        scaleX: urbanPercent / 100,
-        ...barConfig,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 70%",
-          once: true,
-        },
-      });
-
-      gsap.to(ruralBarRef.current, {
-        scaleX: ruralPercent / 100,
-        ...barConfig,
-        delay: 0.15,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 70%",
-          once: true,
-        },
-      });
-
-      gsap.set(gapBarRef.current, {
-        scaleX: 0,
+      gsap.from(chartWrapperRef.current, {
         opacity: 0,
-        transformOrigin: "left center",
-      });
-
-      gsap.to(gapBarRef.current, {
-        scaleX: 1,
-        opacity: 1,
-        duration: 0.8,
-        ease: "power2.out",
-        delay: 0.9,
+        x: 40,
+        duration: 1.2,
+        ease: "power3.out",
         scrollTrigger: {
-          trigger: sectionRef.current,
+          trigger: chartWrapperRef.current,
           start: "top 70%",
           once: true,
         },
       });
-    }, sectionRef);
+    }, containerRef);
 
     return () => ctx.revert();
-  }, [urbanPercent, ruralPercent, gap]);
+  }, [gap]);
 
   return (
-    <section ref={sectionRef} className="px-6">
-      <div className="mx-auto w-full max-w-6xl">
-        <div className="mb-14 flex items-center gap-3">
-          <span className="inline-block h-px w-6 bg-gradient-to-r from-amber-400/80 to-transparent" />
-          <span className="text-[0.65rem] font-medium uppercase tracking-[0.45em] text-amber-400/80">
-            Ato 2 — O Abismo&nbsp;·&nbsp;Desigualdade de acesso em 2020
-          </span>
-        </div>
-
-        <div className="mb-16">
-          <div className="flex items-end gap-2">
-            <span className="font-extrabold leading-none tracking-[-0.05em] tabular-nums text-white text-[6rem] sm:text-[9rem] lg:text-[12rem]">
-              <span ref={heroNumberRef}>0.0</span>
-            </span>
-            <span className="mb-3 text-3xl font-bold tracking-tight text-amber-400 sm:mb-5 sm:text-5xl">
-              pp
+    <section ref={containerRef} className="relative px-6 py-16 h-auto">
+      <div className="mx-auto grid w-full max-w-6xl grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-16">
+        
+        <div ref={textRef} className="flex h-fit flex-col pt-10 lg:sticky lg:top-32 lg:col-span-5">
+          <div className="mb-14 flex items-center gap-3">
+            <span className="inline-block h-px w-6 bg-gradient-to-r from-amber-400/80 to-transparent" />
+            <span className="text-[0.65rem] font-medium uppercase tracking-[0.45em] text-amber-400/80">
+              Ato 2 — O Abismo · O Lockdown
             </span>
           </div>
-          <p className="text-lg tracking-wide text-slate-400">
-            de vantagem das cidades sobre o campo
+
+          <div className="mb-12">
+            <div className="flex items-end gap-2">
+              <span className="font-extrabold leading-none tracking-[-0.05em] tabular-nums text-white text-[5rem] sm:text-[7rem] lg:text-[9rem]">
+                <span ref={heroNumberRef}>0.0</span>
+              </span>
+              <span className="mb-3 self-end pb-4 text-lg font-semibold tracking-tight text-amber-400 sm:text-xl">
+                % de defasagem
+              </span>
+            </div>
+            <p className="max-w-lg text-lg leading-relaxed tracking-wide text-slate-400">
+              entre a conectividade dos grandes polos e o isolamento do interior do estado.
+            </p>
+          </div>
+
+          <p className="mt-6 max-w-md text-base leading-relaxed text-slate-400 sm:text-lg">
+            Quando a ordem foi{" "}
+            <span className="font-medium text-amber-300/90">Fique em Casa</span>,
+            os centros urbanos de MT migraram para o home office.{" "}
+            <span className="text-slate-300">
+              O campo sofreu um apagão digital que a pandemia não criou — apenas
+              tornou impossível de ignorar.
+            </span>
           </p>
-        </div>
-
-        <div className="space-y-8 rounded-3xl border border-white/[0.07] bg-white/[0.025] px-8 py-10 backdrop-blur-xl">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="inline-block h-2 w-2 rounded-full bg-cyan-400" />
-                <span className="text-sm uppercase tracking-[0.3em] text-slate-300">
-                  Áreas Urbanas
-                </span>
-              </div>
-              <span
-                ref={urbanCounterRef}
-                className="font-mono text-base font-semibold tabular-nums text-cyan-400"
-              >
-                0.0%
-              </span>
-            </div>
-            <div className="relative h-3 w-full overflow-hidden rounded-full bg-white/[0.05]">
-              <div
-                ref={urbanBarRef}
-                className="absolute inset-y-0 left-0 w-full rounded-full bg-gradient-to-r from-cyan-400 to-blue-400 shadow-[0_0_20px_rgba(34,211,238,0.35)]"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="inline-block h-2 w-2 rounded-full bg-slate-500" />
-                <span className="text-sm uppercase tracking-[0.3em] text-slate-400">
-                  Áreas Rurais
-                </span>
-              </div>
-              <span
-                ref={ruralCounterRef}
-                className="font-mono text-base font-semibold tabular-nums text-slate-400"
-              >
-                0.0%
-              </span>
-            </div>
-            <div className="relative h-3 w-full overflow-hidden rounded-full bg-white/[0.05]">
-              <div
-                ref={ruralBarRef}
-                className="absolute inset-y-0 left-0 w-full rounded-full bg-gradient-to-r from-slate-500 to-slate-600"
-              />
-            </div>
-          </div>
-
-          <div className="relative h-8">
-            <div className="absolute inset-y-0 left-0 w-full">
-              <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-white/[0.04]" />
-              <div
-                ref={gapBarRef}
-                className="absolute inset-y-0"
-                style={{
-                  left: `${ruralPercent}%`,
-                  width: `${gap}%`,
-                }}
-              >
-                <div className="relative flex h-full items-center">
-                  <div className="absolute inset-x-0 inset-y-[9px] rounded-full bg-amber-500/25 shadow-[0_0_14px_rgba(245,158,11,0.35)]" />
-                  <div className="absolute inset-y-0 left-0 w-px bg-amber-400/50" />
-                  <div className="absolute inset-y-0 right-0 w-px bg-amber-400/50" />
-                  <span className="absolute left-1/2 -top-5 -translate-x-1/2 whitespace-nowrap text-[0.6rem] uppercase tracking-[0.3em] text-amber-400/90">
-                    Gap&nbsp;{gap.toFixed(1)}pp
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-4 grid grid-cols-1 gap-px border-t border-white/[0.05] pt-8 sm:grid-cols-3">
+          
+          <div className="mt-12 grid grid-cols-1 gap-px border-t border-white/[0.05] pt-8 sm:grid-cols-3">
             {MICRO_STATS.map((s) => (
               <div key={s.label} className="flex flex-col gap-1 px-4 first:pl-0 last:pr-0">
                 <span className="font-mono text-xl font-bold text-white">
@@ -268,12 +145,118 @@ export default function ComparisonSection({
           </div>
         </div>
 
-        <p className="mt-10 max-w-2xl text-base leading-relaxed text-slate-400 sm:text-lg">
-          A pandemia não criou esse abismo.{" "}
-          <span className="text-slate-300">
-            Ela o tornou impossível de ignorar.
-          </span>
-        </p>
+        <div className="flex flex-col justify-center pb-16 lg:col-span-7">
+          <div
+            ref={chartWrapperRef}
+            className="rounded-3xl border border-white/[0.07] bg-white/[0.025] px-6 py-10 backdrop-blur-xl"
+          >
+            <div className="text-sm uppercase tracking-[0.2em] text-slate-400 mb-8">
+              Acesso e Privilégio vs Exclusão
+            </div>
+            <div className="h-72 w-full" role="img" aria-label="Gráfico de Abismo Urbano e Rural">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={chartData}
+                  layout="vertical"
+                  margin={{ top: 0, right: 30, left: 0, bottom: 0 }}
+                  barSize={32}
+                >
+                  <defs>
+                    <linearGradient id="urban-gradient" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#22d3ee" stopOpacity={0.9} />
+                      <stop offset="100%" stopColor="#3b82f6" stopOpacity={1} />
+                    </linearGradient>
+                    <linearGradient id="rural-gradient" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#64748b" stopOpacity={0.9} />
+                      <stop offset="100%" stopColor="#475569" stopOpacity={1} />
+                    </linearGradient>
+                    <filter id="bar-glow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feGaussianBlur stdDeviation="4" result="blur" />
+                      <feMerge>
+                        <feMergeNode in="blur" />
+                        <feMergeNode in="SourceGraphic" />
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="rgba(148,163,184,0.05)" />
+                  <XAxis 
+                    type="number" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: "#64748B", fontSize: 11 }} 
+                    tickFormatter={(val) => `${val}%`}
+                    domain={[0, 100]}
+                  />
+                  <YAxis 
+                    type="category" 
+                    dataKey="name" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: "#cbd5e1", fontSize: 12, fontWeight: 500 }}
+                    width={140}
+                  />
+                  <Tooltip 
+                    cursor={{ fill: "rgba(255,255,255,0.02)" }}
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                          <div className="rounded-xl border border-slate-800 bg-slate-950/80 px-4 py-3 shadow-lg backdrop-blur-md text-slate-200">
+                            <p className="text-sm font-semibold text-white mb-1">{payload[0].payload.name}</p>
+                            <p className="text-xs text-slate-300">
+                              Métrica: <span className="font-mono text-cyan-400">{Number(payload[0].value).toFixed(1)}%</span>
+                            </p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Legend 
+                    verticalAlign="top"
+                    align="right"
+                    wrapperStyle={{ paddingBottom: 20 }}
+                    content={() => (
+                      <div className="flex justify-end items-center gap-6">
+                        <div className="flex items-center gap-2">
+                          <span className="w-3 h-3 rounded-sm bg-gradient-to-r from-cyan-400 to-blue-500 shadow-[0_0_8px_rgba(34,211,238,0.4)]"></span>
+                          <span className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Privilégio Conectado</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="w-3 h-3 rounded-sm bg-gradient-to-r from-slate-500 to-slate-600"></span>
+                          <span className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Apagão de Acesso</span>
+                        </div>
+                      </div>
+                    )}
+                  />
+                  <Bar 
+                    dataKey="value" 
+                    radius={[0, 6, 6, 0]}
+                    isAnimationActive={true}
+                    animationDuration={1500}
+                    animationEasing="ease-out"
+                    animationBegin={800}
+                  >
+                    {chartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} filter={index === 0 ? "url(#bar-glow)" : undefined} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            
+            <div className="mt-10 rounded-2xl bg-amber-500/[0.04] border border-amber-500/10 p-5">
+              <div className="flex items-start gap-3">
+                <span className="text-amber-500/80 mt-0.5">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+                </span>
+                <p className="text-sm text-slate-400 leading-relaxed">
+                  Os dados referenciam o pico da adoção do home office nas faixas de maior renda (centros urbanos) em contraste com o total de domicílios isolados que permaneceram offline (áreas rurais e periféricas).
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );

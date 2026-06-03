@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import InternetAccessCard from "../src/components/modules/InternetAccessCard";
 import EducationSection from "../src/components/modules/EducationSection";
 import type { InternetAccessSeries } from "../src/services/sidra/pnadTicInternetAccessService";
-import type { EducationAccessSeries } from "../src/services/sidra/pnadTicEducationAccessService";
+import type { MatoGrossoDigitalDivideData } from "../src/types/digitalDivide";
 
 interface MockInternetAccessPoint {
   period: string;
@@ -22,22 +22,38 @@ interface MockInternetAccessSeries {
   points: MockInternetAccessPoint[];
 }
 
-interface MockEducationAccessPoint {
-  period: string;
-  value: number;
-}
-
-interface MockEducationAccessTerritory {
-  code: string;
-  name: string;
-}
-
-interface MockEducationAccessSeries {
-  indicator: string;
-  territory: MockEducationAccessTerritory;
-  unit: string | null;
-  points: MockEducationAccessPoint[];
-}
+const mockDigitalDivideData: MatoGrossoDigitalDivideData = {
+  territorio: { id: "51", nome: "Mato Grosso", uf: "MT" },
+  choqueTrabalhoRemoto: {
+    percentualAfastadosDistanciamento: 15.2,
+    teleworkByRendimento: [],
+    teleworkByCorRaca: [],
+    teleworkByEscolaridade: [],
+  },
+  realidadeInfraestrutura: {
+    percentualDomiciliosSemInternet: 18.4,
+    motivosDomiciliosSemInternet: [],
+    equipamentosUtilizados: [
+      { equipamento: "Telefone celular", percentualUsuarios: 98.2 },
+      { equipamento: "Microcomputador", percentualUsuarios: 35.1 },
+      { equipamento: "Televisão", percentualUsuarios: 28.4 },
+    ],
+    motivosFaltaAcessoPessoas: [],
+  },
+  resumoNarrativo: {
+    gapTeleworkRendimentoExtremo: 32.5,
+    percentualDependenciaCelular: 98.2,
+    principalBarreiraAcesso: "Falta de equipamento",
+    percentualAfastadosEmTeletrabalho: 10.4,
+  },
+  fonte: {
+    pesquisas: ["PNAD COVID-19", "PNAD Contínua TIC"],
+    tabelas: ["6817", "6821", "6841", "7447", "7454", "7455"],
+    referencia: "IBGE SIDRA API v3",
+    dataExtracao: "2024-01-01T00:00:00.000Z",
+  },
+  isFallback: true,
+};
 
 vi.mock("framer-motion", () => ({
   motion: new Proxy(
@@ -109,25 +125,7 @@ const mockInternetSeries: MockInternetAccessSeries = {
   ],
 };
 
-const mockEducationSeries: MockEducationAccessSeries = {
-  indicator:
-    "Percentual de estudantes que utilizaram a internet",
-  territory: {
-    code: "51",
-    name: "Mato Grosso",
-  },
-  unit: "%",
-  points: [
-    { period: "2017", value: 72.3 },
-    { period: "2018", value: 75.1 },
-    { period: "2019", value: 78.9 },
-    { period: "2020", value: 83.4 },
-    { period: "2021", value: 87.6 },
-    { period: "2022", value: 90.2 },
-    { period: "2023", value: 93.1 },
-    { period: "2024", value: 95.4 },
-  ],
-};
+
 
 describe("InternetAccessCard — Acessibilidade (a11y)", () => {
   it("deve renderizar o wrapper do gráfico com role img", () => {
@@ -231,7 +229,7 @@ describe("InternetAccessCard — Acessibilidade (a11y)", () => {
 describe("EducationSection — Acessibilidade (a11y)", () => {
   it("deve renderizar o wrapper do gráfico com role img", () => {
     render(
-      <EducationSection series={mockEducationSeries as EducationAccessSeries} />,
+      <EducationSection data={mockDigitalDivideData} />,
     );
 
     const chartRegion = screen.getByRole("img");
@@ -240,75 +238,29 @@ describe("EducationSection — Acessibilidade (a11y)", () => {
 
   it("deve ter aria-label descritivo contendo o nome do indicador no wrapper do gráfico", () => {
     render(
-      <EducationSection series={mockEducationSeries as EducationAccessSeries} />,
+      <EducationSection data={mockDigitalDivideData} />,
     );
 
     const chartRegion = screen.getByRole("img");
     const label = chartRegion.getAttribute("aria-label");
 
     expect(label).not.toBeNull();
-    expect(label).toContain(mockEducationSeries.indicator);
-  });
-
-  it("deve ter o aria-label do gráfico iniciando com o prefixo correto", () => {
-    render(
-      <EducationSection series={mockEducationSeries as EducationAccessSeries} />,
-    );
-
-    const chartRegion = screen.getByRole("img");
-    const label = chartRegion.getAttribute("aria-label") ?? "";
-
-    expect(label.startsWith("Gráfico de barras:")).toBe(true);
+    expect(label).toContain("equipamento");
   });
 
   it("deve renderizar o heading h2 com o título da seção", () => {
     render(
-      <EducationSection series={mockEducationSeries as EducationAccessSeries} />,
+      <EducationSection data={mockDigitalDivideData} />,
     );
 
     const heading = screen.getByRole("heading", { level: 2 });
     expect(heading).toBeInTheDocument();
-    expect(heading).toHaveTextContent(/Estudante sem internet/i);
-  });
-
-  it("deve renderizar os stat cards com tabIndex para navegação por teclado", () => {
-    render(
-      <EducationSection series={mockEducationSeries as EducationAccessSeries} />,
-    );
-
-    const focusableCards = document.querySelectorAll("[tabindex='0']");
-    expect(focusableCards.length).toBeGreaterThanOrEqual(3);
-  });
-
-  it("deve exibir o stat card do ultimo ano com o período correto", () => {
-    render(
-      <EducationSection series={mockEducationSeries as EducationAccessSeries} />,
-    );
-
-    const latestPeriod =
-      mockEducationSeries.points[mockEducationSeries.points.length - 1].period;
-    expect(screen.getByText(latestPeriod)).toBeInTheDocument();
-  });
-
-  it("deve exibir o label Pico no stat card", () => {
-    render(
-      <EducationSection series={mockEducationSeries as EducationAccessSeries} />,
-    );
-
-    expect(screen.getByText(/Pico/i)).toBeInTheDocument();
-  });
-
-  it("deve exibir o label Evolucao no stat card", () => {
-    render(
-      <EducationSection series={mockEducationSeries as EducationAccessSeries} />,
-    );
-
-    expect(screen.getByText(/Evolu/i)).toBeInTheDocument();
+    expect(heading).toHaveTextContent(/O celular virou/i);
   });
 
   it("o aria-label do gráfico deve ser único e não vazio", () => {
     render(
-      <EducationSection series={mockEducationSeries as EducationAccessSeries} />,
+      <EducationSection data={mockDigitalDivideData} />,
     );
 
     const chartRegion = screen.getByRole("img");
@@ -319,7 +271,7 @@ describe("EducationSection — Acessibilidade (a11y)", () => {
 
   it("deve exibir o eyebrow Ato 3 textualmente", () => {
     render(
-      <EducationSection series={mockEducationSeries as EducationAccessSeries} />,
+      <EducationSection data={mockDigitalDivideData} />,
     );
 
     expect(screen.getByText(/Ato 3/i)).toBeInTheDocument();

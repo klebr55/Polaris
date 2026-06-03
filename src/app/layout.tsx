@@ -17,6 +17,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <div className="relative min-h-screen overflow-hidden">
           <div className="pointer-events-none fixed inset-0 z-0">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(15,23,42,0.8),rgba(2,6,23,1))]" />
+            <div className="stars stars-1" />
+            <div className="stars stars-2" />
+            <div className="stars stars-3" />
             <div className="absolute bottom-0 left-0 right-0 h-[40vh] bg-gradient-to-t from-[#020617] via-[#020617]/80 to-transparent" />
             <div className="scan-line" />
           </div>
