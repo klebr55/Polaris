@@ -1,13 +1,14 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { motion, useMotionValueEvent, useScroll, AnimatePresence } from "framer-motion";
+import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 
 export default function Navbar() {
-  const { scrollY } = useScroll();
+  const { scrollY, scrollYProgress } = useScroll();
   const lastScrollY = useRef(0);
   const [visible, setVisible] = useState(true);
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   useMotionValueEvent(scrollY, "change", (current) => {
     const previous = lastScrollY.current;
@@ -27,6 +28,10 @@ export default function Navbar() {
     lastScrollY.current = current;
   });
 
+  useMotionValueEvent(scrollYProgress, "change", (val) => {
+    setProgress(val);
+  });
+
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -39,7 +44,7 @@ export default function Navbar() {
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
         hasScrolled
-          ? "border-b border-white/[0.06] bg-[#020617]/60 shadow-[0_4px_30px_rgba(0,0,0,0.3)] backdrop-blur-2xl"
+          ? "border-b border-white/[0.04] bg-[#020617]/70 shadow-[0_4px_30px_rgba(0,0,0,0.4)] backdrop-blur-2xl ring-1 ring-inset ring-white/[0.02]"
           : "bg-transparent"
       }`}
     >
@@ -75,17 +80,14 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-8 sm:flex">
           {[
-            { label: "Inicio", href: "#" },
-            { label: "Conectividade", href: "#conectividade" },
-            { label: "Educacao", href: "#educacao" },
-          ].map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="relative text-xs font-medium uppercase tracking-[0.25em] text-slate-400 transition-colors duration-200 hover:text-white after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-gradient-to-r after:from-cyan-400 after:to-transparent after:transition-all after:duration-300 hover:after:w-full"
-            >
-              {link.label}
-            </a>
+            { label: "O Choque", href: "#" },
+            { label: "O Abismo", href: "#conectividade" },
+            { label: "A Urgência", href: "#educacao" },
+          ].map((link, idx) => (
+            <div key={link.label} className="flex items-center gap-2 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-slate-400">
+              <span className={`h-1.5 w-1.5 rounded-full ${progress > (idx * 0.3) ? "bg-cyan-400" : "bg-slate-700"}`} />
+              <a href={link.href} className="transition-colors hover:text-white">{link.label}</a>
+            </div>
           ))}
         </div>
 
@@ -102,6 +104,8 @@ export default function Navbar() {
           </a>
         </div>
       </nav>
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+      <div className="absolute left-0 bottom-0 h-px bg-cyan-400" style={{ width: `${progress * 100}%` }} />
     </motion.header>
   );
 }
