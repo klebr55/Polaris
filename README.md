@@ -408,11 +408,11 @@ Os arquivos de teste residem em `/tests`. A configuração está em `vitest.conf
 
 ## Equipe
 
-| Nome | Papel |
-| Kleber Vinícius | Tech Lead & Software Engineer |
-| Luiz Fernando | Product/Data |
-| Thor Ribeiro | UX / Storytelling |
-| Thaiane Vitoria | Documentation |
+| Nome | Papel | <br>
+| Kleber Vinícius | Tech Lead & Software Engineer | <br>
+| Luiz Fernando | Product/Data | <br>
+| Thor Ribeiro | UX / Storytelling | <br>
+| Thaiane Vitoria | Documentation | <br>
 | Kelmy Adriano | QA Analyst |
 
 ---
