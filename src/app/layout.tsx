@@ -22,15 +22,31 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Polaris — Data Storytelling de Mato Grosso",
+  title: "Polaris — O Abismo Digital em Mato Grosso",
   description:
-    "Uma experiência cinematográfica de dados públicos que revela o salto tecnológico de Mato Grosso através da PNAD TIC do IBGE.",
-  keywords: ["IBGE", "PNAD TIC", "Mato Grosso", "internet", "dados públicos", "conectividade"],
+    "Uma experiência interativa baseada em dados públicos que revela o abismo digital entre áreas urbanas e rurais em Mato Grosso.",
+  keywords: ["IBGE", "PNAD TIC", "Mato Grosso", "internet", "dados públicos", "conectividade", "desigualdade"],
   openGraph: {
-    title: "Polaris — Data Storytelling de Mato Grosso",
+    title: "Polaris — O Abismo Digital em Mato Grosso",
     description:
-      "Uma experiência cinematográfica de dados públicos que revela o salto tecnológico de Mato Grosso.",
+      "Uma experiência interativa baseada em dados públicos que revela o abismo digital entre áreas urbanas e rurais em Mato Grosso.",
     type: "website",
+    locale: "pt_BR",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Polaris — Nem todos atravessaram a pandemia da mesma forma.",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Polaris — O Abismo Digital em Mato Grosso",
+    description:
+      "Uma experiência interativa baseada em dados públicos que revela o abismo digital entre áreas urbanas e rurais em Mato Grosso.",
+    images: ["/og-image.png"],
   },
 };
 
