@@ -7,6 +7,7 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: ["./tests/setup.ts"],
-    include: ["tests/**/*.a11y.spec.{ts,tsx}"],
+    include: ["tests/**/*.spec.{ts,tsx}"],
+    exclude: ["tests/sidraAccess.spec.ts"],
   },
 });

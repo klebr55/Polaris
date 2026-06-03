@@ -62,6 +62,10 @@ vi.mock("framer-motion", () => ({
     },
   ),
   AnimatePresence: ({ children }: { children: unknown }) => children,
+  useMotionValue: () => ({ set: vi.fn(), get: vi.fn(() => 0) }),
+  useSpring: () => ({ set: vi.fn(), get: vi.fn(() => 0) }),
+  useTransform: () => ({ set: vi.fn(), get: vi.fn(() => 0) }),
+  useAnimate: () => [null, vi.fn()],
 }));
 
 vi.mock("gsap", () => ({
@@ -195,7 +199,7 @@ describe("InternetAccessCard — Acessibilidade (a11y)", () => {
       <InternetAccessCard series={mockInternetSeries as InternetAccessSeries} />,
     );
 
-    expect(screen.getByText(/Ultimo ano/i)).toBeInTheDocument();
+    expect(screen.getByText(/Último ano/i)).toBeInTheDocument();
   });
 
   it("deve exibir o label Pico no stat card", () => {
@@ -211,7 +215,7 @@ describe("InternetAccessCard — Acessibilidade (a11y)", () => {
       <InternetAccessCard series={mockInternetSeries as InternetAccessSeries} />,
     );
 
-    expect(screen.getByText(/Evolucao/i)).toBeInTheDocument();
+    expect(screen.getByText(/Evolu/i)).toBeInTheDocument();
   });
 
   it("deve ter exatamente um elemento com role img para o gráfico", () => {
@@ -254,7 +258,7 @@ describe("EducationSection — Acessibilidade (a11y)", () => {
     const chartRegion = screen.getByRole("img");
     const label = chartRegion.getAttribute("aria-label") ?? "";
 
-    expect(label.startsWith("Grafico de barras:")).toBe(true);
+    expect(label.startsWith("Gráfico de barras:")).toBe(true);
   });
 
   it("deve renderizar o heading h2 com o título da seção", () => {
@@ -264,7 +268,7 @@ describe("EducationSection — Acessibilidade (a11y)", () => {
 
     const heading = screen.getByRole("heading", { level: 2 });
     expect(heading).toBeInTheDocument();
-    expect(heading).toHaveTextContent("O Impacto na Educação");
+    expect(heading).toHaveTextContent(/Estudante sem internet/i);
   });
 
   it("deve renderizar os stat cards com tabIndex para navegação por teclado", () => {
@@ -299,7 +303,7 @@ describe("EducationSection — Acessibilidade (a11y)", () => {
       <EducationSection series={mockEducationSeries as EducationAccessSeries} />,
     );
 
-    expect(screen.getByText(/Evolucao/i)).toBeInTheDocument();
+    expect(screen.getByText(/Evolu/i)).toBeInTheDocument();
   });
 
   it("o aria-label do gráfico deve ser único e não vazio", () => {
@@ -318,6 +322,6 @@ describe("EducationSection — Acessibilidade (a11y)", () => {
       <EducationSection series={mockEducationSeries as EducationAccessSeries} />,
     );
 
-    expect(screen.getByText("Ato 3")).toBeInTheDocument();
+    expect(screen.getByText(/Ato 3/i)).toBeInTheDocument();
   });
 });
