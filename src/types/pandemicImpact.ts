@@ -1,4 +1,4 @@
-export type PeriodKey = "2019" | "2021" | "2022";
+export type PeriodKey = "2019" | "2020" | "2021" | "2022" | "2023";
 
 export type SituacaoDomicilio = "Urbana" | "Rural";
 
@@ -84,6 +84,8 @@ export interface CleanPandemicImpact {
     readonly pesquisa: "PNAD Contínua TIC";
     readonly agregados: readonly string[];
     readonly periodos: readonly PeriodKey[];
+    readonly janelaInicio: "2019";
+    readonly janelaFim: "2023";
     readonly dataExtracao: string;
   };
   readonly isFallback: boolean;

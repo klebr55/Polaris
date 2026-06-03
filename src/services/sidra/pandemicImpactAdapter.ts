@@ -39,16 +39,32 @@ const PANDEMIC_EDUCACAO_CLASSIFICATION =
 
 const PANDEMIC_TERRITORY_LEVEL = "N3";
 const PANDEMIC_TERRITORY_CODE = "51";
-const PANDEMIC_PERIODS = "2019|2021|2022";
+
+const NARRATIVE_WINDOW_START = "2019" as const;
+const NARRATIVE_WINDOW_END = "2023" as const;
+
+const PANDEMIC_PERIODS = "2019|2020|2021|2022|2023";
+
+const VALID_PERIODS = new Set<PeriodKey>([
+  "2019",
+  "2020",
+  "2021",
+  "2022",
+  "2023",
+]);
 
 const SIDRA_REVALIDATE_SECONDS =
   Number(process.env.SIDRA_REVALIDATE_SECONDS) || 604800;
 
-const VALID_PERIODS = new Set<string>(["2019", "2021", "2022"]);
-
 function parseSidraNumber(value: string): number | null {
   const trimmed = value.trim();
-  if (!trimmed || trimmed === ".." || trimmed === "..." || trimmed === "-" || trimmed === "X") {
+  if (
+    !trimmed ||
+    trimmed === ".." ||
+    trimmed === "..." ||
+    trimmed === "-" ||
+    trimmed === "X"
+  ) {
     return null;
   }
 
@@ -71,7 +87,9 @@ function roundTo(value: number, decimals = 2): number {
   return Math.round(value * factor) / factor;
 }
 
-function resolveSituacaoDomicilio(categoryName: string): SituacaoDomicilio | null {
+function resolveSituacaoDomicilio(
+  categoryName: string,
+): SituacaoDomicilio | null {
   const lower = categoryName.toLowerCase().trim();
   if (lower === "urbana") return "Urbana";
   if (lower === "rural") return "Rural";
@@ -129,7 +147,9 @@ function extractPeriodPoints(
   serie: Readonly<Record<string, string>>,
 ): PandemicDataPoint[] {
   return (Object.entries(serie) as [string, string][])
-    .filter(([period]) => VALID_PERIODS.has(period))
+    .filter((entry): entry is [PeriodKey, string] =>
+      VALID_PERIODS.has(entry[0] as PeriodKey),
+    )
     .map(([period, raw]) => {
       const percentual = parseSidraNumber(raw);
       if (percentual === null) return null;
@@ -159,11 +179,13 @@ function buildEducacaoUrl(): string {
   );
 }
 
+const FETCH_OPTIONS = {
+  headers: { Accept: "application/json" },
+  next: { revalidate: SIDRA_REVALIDATE_SECONDS },
+} as const;
+
 async function fetchDomicilioRaw(): Promise<RawSidraPandemicResponse> {
-  const response = await fetch(buildDomicilioUrl(), {
-    headers: { Accept: "application/json" },
-    next: { revalidate: SIDRA_REVALIDATE_SECONDS },
-  });
+  const response = await fetch(buildDomicilioUrl(), FETCH_OPTIONS);
 
   if (!response.ok) {
     throw new SidraServiceError(
@@ -176,10 +198,7 @@ async function fetchDomicilioRaw(): Promise<RawSidraPandemicResponse> {
 }
 
 async function fetchEducacaoRaw(): Promise<RawSidraPandemicResponse> {
-  const response = await fetch(buildEducacaoUrl(), {
-    headers: { Accept: "application/json" },
-    next: { revalidate: SIDRA_REVALIDATE_SECONDS },
-  });
+  const response = await fetch(buildEducacaoUrl(), FETCH_OPTIONS);
 
   if (!response.ok) {
     throw new SidraServiceError(
@@ -207,7 +226,9 @@ class PandemicImpactAdapter
       fonte: {
         pesquisa: "PNAD Contínua TIC",
         agregados: [PANDEMIC_DOMICILIO_AGGREGATE, PANDEMIC_EDUCACAO_AGGREGATE],
-        periodos: ["2019", "2021", "2022"],
+        periodos: Array.from(VALID_PERIODS),
+        janelaInicio: NARRATIVE_WINDOW_START,
+        janelaFim: NARRATIVE_WINDOW_END,
         dataExtracao: new Date().toISOString(),
       },
       isFallback: false,
@@ -332,8 +353,8 @@ class PandemicImpactAdapter
       return ponto?.percentual ?? 0;
     };
 
-    const latestPeriod: PeriodKey = "2022";
-    const basePeriod: PeriodKey = "2019";
+    const latestPeriod: PeriodKey = NARRATIVE_WINDOW_END;
+    const basePeriod: PeriodKey = NARRATIVE_WINDOW_START;
 
     const urbanaBase = getDomicilioValue("Urbana", basePeriod);
     const ruralBase = getDomicilioValue("Rural", basePeriod);
@@ -371,7 +392,10 @@ export async function fetchPandemicImpact(): Promise<CleanPandemicImpact> {
     ]);
 
     const adapter = new PandemicImpactAdapter();
-    return adapter.adapt({ domicilio: domicilioPayload, educacao: educacaoPayload });
+    return adapter.adapt({
+      domicilio: domicilioPayload,
+      educacao: educacaoPayload,
+    });
   } catch {
     return fallbackPandemicData;
   }

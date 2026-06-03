@@ -100,7 +100,9 @@ function extractSingleLatestValue(payload: SidraResponseV3): number {
   const resultado = variable?.resultados[0];
   if (!resultado) return 0;
 
-  const seriesEntry = resultado.series.find((s) => s.localidade.id === MT_CODE);
+  const seriesEntry = resultado.series.find(
+    (s: { localidade: { id: string } }) => s.localidade.id === MT_CODE,
+  );
   if (!seriesEntry) return 0;
 
   return extractLatestValidValue(seriesEntry.serie) ?? 0;
@@ -119,7 +121,7 @@ function extractCategoryValuePairs(
     if (!categoryName) continue;
 
     const seriesEntry = resultado.series.find(
-      (s) => s.localidade.id === MT_CODE,
+      (s: { localidade: { id: string } }) => s.localidade.id === MT_CODE,
     );
     if (!seriesEntry) continue;
 
@@ -198,7 +200,7 @@ class MatoGrossoTechPandemicFacade {
         if (!categoryName) continue;
 
         const seriesEntry = resultado.series.find(
-          (s) => s.localidade.id === MT_CODE,
+          (s: { localidade: { id: string } }) => s.localidade.id === MT_CODE,
         );
         if (!seriesEntry) continue;
 
@@ -326,60 +328,67 @@ class MatoGrossoTechPandemicFacade {
   }
 
   async execute(): Promise<MatoGrossoDigitalDivideData> {
-    const results = await Promise.allSettled([
-      fetchTablePayload(
-        "6817",
-        buildUrl("6817", COVID_PERIODS, T6817_VARIABLE),
-        this.fetchOptions,
-      ),
-      fetchTablePayload(
-        "6821",
-        buildUrl("6821", COVID_PERIODS, T6821_VARIABLE, T6821_CLASS),
-        this.fetchOptions,
-      ),
-      fetchTablePayload(
-        "6841",
-        buildUrl("6841", COVID_PERIODS, T6841_VARIABLE, T6841_CLASS_PRIMARY),
-        this.fetchOptions,
-      ),
-      fetchTablePayload(
-        "7447",
-        buildUrl("7447", TIC_PERIODS, T7447_VARIABLE, T7447_CLASS),
-        this.fetchOptions,
-      ),
-      fetchTablePayload(
-        "7454",
-        buildUrl("7454", TIC_PERIODS, T7454_VARIABLE, T7454_CLASS),
-        this.fetchOptions,
-      ),
-      fetchTablePayload(
-        "7455",
-        buildUrl("7455", TIC_PERIODS, T7455_VARIABLE, T7455_CLASS),
-        this.fetchOptions,
-      ),
-    ]);
+    const [r6817, r6821, r6841, r7447, r7454, r7455] =
+      await Promise.allSettled([
+        fetchTablePayload(
+          "6817",
+          buildUrl("6817", COVID_PERIODS, T6817_VARIABLE),
+          this.fetchOptions,
+        ),
+        fetchTablePayload(
+          "6821",
+          buildUrl("6821", COVID_PERIODS, T6821_VARIABLE, T6821_CLASS),
+          this.fetchOptions,
+        ),
+        fetchTablePayload(
+          "6841",
+          buildUrl("6841", COVID_PERIODS, T6841_VARIABLE, T6841_CLASS_PRIMARY),
+          this.fetchOptions,
+        ),
+        fetchTablePayload(
+          "7447",
+          buildUrl("7447", TIC_PERIODS, T7447_VARIABLE, T7447_CLASS),
+          this.fetchOptions,
+        ),
+        fetchTablePayload(
+          "7454",
+          buildUrl("7454", TIC_PERIODS, T7454_VARIABLE, T7454_CLASS),
+          this.fetchOptions,
+        ),
+        fetchTablePayload(
+          "7455",
+          buildUrl("7455", TIC_PERIODS, T7455_VARIABLE, T7455_CLASS),
+          this.fetchOptions,
+        ),
+      ]);
 
-    const fulfillments = results.filter(
-      (r): r is PromiseFulfilledResult<SidraResponseV3> =>
-        r.status === "fulfilled",
-    );
+    const choqueGroupFailed =
+      r6817.status === "rejected" &&
+      r6821.status === "rejected" &&
+      r6841.status === "rejected";
 
-    if (fulfillments.length !== 6) {
+    const infraGroupFailed =
+      r7447.status === "rejected" &&
+      r7454.status === "rejected" &&
+      r7455.status === "rejected";
+
+    if (choqueGroupFailed && infraGroupFailed) {
       return fallbackDigitalDivideMT;
     }
 
     try {
-      const [r6817, r6821, r6841, r7447, r7454, r7455] = fulfillments;
+      const emptyPayload: SidraResponseV3 = [];
 
       const choque = this.adaptChoqueTrabalhoRemoto(
-        r6817.value,
-        r6821.value,
-        r6841.value,
+        r6817.status === "fulfilled" ? r6817.value : emptyPayload,
+        r6821.status === "fulfilled" ? r6821.value : emptyPayload,
+        r6841.status === "fulfilled" ? r6841.value : emptyPayload,
       );
+
       const infra = this.adaptRealidadeInfraestrutura(
-        r7447.value,
-        r7454.value,
-        r7455.value,
+        r7447.status === "fulfilled" ? r7447.value : emptyPayload,
+        r7454.status === "fulfilled" ? r7454.value : emptyPayload,
+        r7455.status === "fulfilled" ? r7455.value : emptyPayload,
       );
 
       if (!this.hasMinimalData(choque, infra)) {
