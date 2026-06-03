@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, Variants } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
+import PolarisLogo from "./PolarisLogo";
 
 const SQUAD_MEMBERS = [
   { name: "Kleber Vinicius", role: "Tech Lead & Software Engineer" },
@@ -57,13 +58,16 @@ export default function LegacyFooter() {
             className="h-px w-24 bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent"
           />
 
-          <span className="text-[0.6rem] font-medium uppercase tracking-[0.7em] text-cyan-500/50">
+          <span className="text-[0.6rem] font-medium uppercase tracking-[0.7em] text-cyan-500/70">
             Missao concluida
           </span>
 
-          <h2 className="bg-gradient-to-b from-white via-slate-200 to-slate-500 bg-clip-text text-5xl font-extrabold leading-none tracking-[-0.05em] text-transparent sm:text-6xl lg:text-7xl">
-            Polaris
-          </h2>
+          <div className="flex items-center justify-center gap-4">
+            <PolarisLogo className="h-12 w-12 text-cyan-400" />
+            <h2 className="font-display bg-gradient-to-b from-white via-slate-200 to-slate-500 bg-clip-text text-5xl font-extrabold leading-none tracking-tighter text-transparent sm:text-6xl lg:text-7xl">
+              Polaris
+            </h2>
+          </div>
 
           <p className="max-w-sm text-base leading-relaxed text-slate-500 sm:text-lg">
             Do coracao de Mato Grosso para o mundo.
@@ -120,35 +124,18 @@ export default function LegacyFooter() {
         >
           <div className="flex items-center gap-4">
             <div className="h-px w-10 bg-gradient-to-r from-transparent to-white/10" />
-            <span className="text-[0.55rem] uppercase tracking-[0.6em] text-slate-700">
+            <span className="text-[0.55rem] uppercase tracking-[0.6em] text-slate-500">
               Semana 04 · 2026
             </span>
             <div className="h-px w-10 bg-gradient-to-l from-transparent to-white/10" />
           </div>
 
-          <p className="text-[0.6rem] tracking-wider text-slate-800">
+          <p className="text-[0.6rem] tracking-wider text-slate-500">
             Dados publicos · IBGE SIDRA · PNAD Continua TIC
           </p>
 
-          <div className="mt-2 flex h-5 w-5 items-center justify-center">
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 20 20"
-              fill="none"
-            >
-              <path
-                d="M10 2L12.09 7.26L18 8.27L13.82 12.14L14.94 18L10 15.27L5.06 18L6.18 12.14L2 8.27L7.91 7.26L10 2Z"
-                fill="url(#footer-star)"
-                opacity="0.3"
-              />
-              <defs>
-                <linearGradient id="footer-star" x1="10" y1="2" x2="10" y2="18">
-                  <stop offset="0%" stopColor="#22D3EE" />
-                  <stop offset="100%" stopColor="#0891B2" />
-                </linearGradient>
-              </defs>
-            </svg>
+          <div className="mt-2 flex h-5 w-5 items-center justify-center opacity-30">
+            <PolarisLogo className="h-4 w-4 text-cyan-500" animate={false} />
           </div>
         </motion.div>
       </div>

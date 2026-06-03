@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeAll } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
+import { screen } from "@testing-library/dom";
 import InternetAccessCard from "../src/components/modules/InternetAccessCard";
 import EducationSection from "../src/components/modules/EducationSection";
 import type { InternetAccessSeries } from "../src/services/sidra/pnadTicInternetAccessService";

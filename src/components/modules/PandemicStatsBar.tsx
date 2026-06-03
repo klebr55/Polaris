@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -11,16 +12,18 @@ interface Stat {
   decimals: number;
   label: string;
   sublabel: string;
+  glow: "cyan" | "white";
 }
 
 const STATS: Stat[] = [
   {
     prefix: "+",
     value: 24.3,
-    suffix: "pp",
+    suffix: "%",
     decimals: 1,
     label: "Salto de conectividade",
     sublabel: "2019 → 2022",
+    glow: "cyan",
   },
   {
     prefix: "",
@@ -29,6 +32,7 @@ const STATS: Stat[] = [
     decimals: 1,
     label: "Mato-grossenses online",
     sublabel: "população impactada",
+    glow: "white",
   },
   {
     prefix: "",
@@ -37,6 +41,7 @@ const STATS: Stat[] = [
     decimals: 0,
     label: "O ano que mudou tudo",
     sublabel: "marco da virada digital",
+    glow: "white",
   },
 ];
 
@@ -80,16 +85,20 @@ export default function PandemicStatsBar() {
     <div ref={sectionRef} className="w-full">
       <div className="grid grid-cols-1 gap-px sm:grid-cols-3">
         {STATS.map((stat, i) => (
-          <div
+          <motion.div
             key={stat.label}
-            className="group relative flex flex-col gap-2 rounded-none border border-white/[0.06] bg-white/[0.025] px-8 py-6 backdrop-blur-xl first:rounded-l-2xl last:rounded-r-2xl hover:bg-white/[0.04] transition-colors duration-300"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ type: "spring", stiffness: 50, damping: 20, delay: i * 0.08 }}
+            className="group relative flex flex-col gap-2 rounded-none border border-white/[0.06] bg-white/[0.025] px-8 py-6 backdrop-blur-xl first:rounded-l-2xl last:rounded-r-2xl hover:bg-white/[0.045] hover:border-white/[0.15] hover:shadow-[0_0_30px_rgba(34,211,238,0.07)] transition-all duration-500 ease-out"
           >
-            <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-none first:rounded-l-2xl last:rounded-r-2xl bg-gradient-to-br from-cyan-500/[0.04] to-transparent" />
+            <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-none first:rounded-l-2xl last:rounded-r-2xl bg-gradient-to-br from-cyan-500/[0.05] to-transparent" />
 
             <div className="flex items-baseline gap-1">
               <span
                 ref={(el) => { valueRefs.current[i] = el; }}
-                className="font-mono text-3xl font-bold tabular-nums tracking-tight text-white sm:text-4xl"
+                className={`font-display text-3xl font-bold tabular-nums tracking-tighter text-white sm:text-4xl ${stat.glow === "cyan" ? "text-glow-cyan" : "text-glow-white"}`}
               >
                 {stat.prefix}0{stat.suffix}
               </span>
@@ -105,7 +114,7 @@ export default function PandemicStatsBar() {
             </div>
 
             <div className="mt-1 h-px w-8 bg-gradient-to-r from-cyan-400/60 to-transparent" />
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>

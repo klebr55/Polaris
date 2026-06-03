@@ -1,18 +1,44 @@
 import type { ReactNode } from "react";
+import { Space_Grotesk, Inter } from "next/font/google";
 import Navbar from "../components/modules/Navbar";
 import SmoothScroller from "../components/modules/SmoothScroller";
+import CustomCursor from "../components/modules/CustomCursor";
 import "../styles/globals.css";
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-display",
+  display: "swap",
+  preload: true,
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-body",
+  display: "swap",
+  preload: true,
+});
 
 export const metadata = {
   title: "Polaris — Data Storytelling de Mato Grosso",
   description:
-    "Uma experiencia cinematografica de dados publicos que revela o salto tecnologico de Mato Grosso atraves da PNAD TIC do IBGE.",
+    "Uma experiência cinematográfica de dados públicos que revela o salto tecnológico de Mato Grosso através da PNAD TIC do IBGE.",
+  keywords: ["IBGE", "PNAD TIC", "Mato Grosso", "internet", "dados públicos", "conectividade"],
+  openGraph: {
+    title: "Polaris — Data Storytelling de Mato Grosso",
+    description:
+      "Uma experiência cinematográfica de dados públicos que revela o salto tecnológico de Mato Grosso.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-BR" className="h-full">
-      <body className="min-h-screen bg-[#020617] font-sans text-slate-100 antialiased">
+    <html lang="pt-BR" className={`h-full ${spaceGrotesk.variable} ${inter.variable}`}>
+      <body className="min-h-screen bg-[#020617] font-body text-slate-100 antialiased">
+        <CustomCursor />
         <SmoothScroller />
         <div className="relative min-h-screen overflow-hidden">
           <div className="pointer-events-none fixed inset-0 z-0">

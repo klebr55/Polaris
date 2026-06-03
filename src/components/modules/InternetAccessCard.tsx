@@ -114,7 +114,7 @@ export default function InternetAccessCard({
   return (
     <div className="flex flex-col gap-6 relative">
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs uppercase tracking-[0.4em] text-slate-400">
-        <span>Growth signal</span>
+        <span>Sinal de crescimento</span>
         <span>
           {series.territory.name} {series.territory.code}
         </span>
@@ -131,7 +131,7 @@ export default function InternetAccessCard({
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1.2, ease: "easeOut" }}
-        className="rounded-2xl border border-white/[0.04] bg-white/[0.02] p-4 shadow-2xl backdrop-blur-xl relative overflow-hidden"
+        className="rounded-2xl border border-white/[0.04] bg-white/[0.02] p-4 shadow-2xl backdrop-blur-xl relative overflow-hidden transition-all duration-500 ease-out hover:border-white/[0.16] hover:bg-white/[0.04] hover:shadow-[0_20px_60px_rgba(34,211,238,0.1)]"
       >
         <div ref={chartRef} className="h-56 w-full relative z-10" role="img" aria-label={`Grafico de ${series.indicator}`}>
           <ResponsiveContainer width="100%" height="100%">
@@ -239,31 +239,38 @@ export default function InternetAccessCard({
             label: "Último ano",
             value: latest.period,
             detail: `Acesso ${formatPercent(latest.value)}`,
+            accent: false,
           },
           {
             label: "Pico",
             value: formatPercent(peak.value),
             detail: `em ${peak.period}`,
+            accent: true,
           },
           {
             label: "Evolução",
             value: deltaLabel,
             detail: `desde ${first.period}`,
+            accent: true,
           },
-        ].map((item) => (
-          <div
+        ].map((item, i) => (
+          <motion.div
             key={item.label}
-            className="group relative flex flex-col gap-1 rounded-2xl border border-white/[0.03] bg-white/[0.015] px-4 py-3 text-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/20 hover:-translate-y-1 hover:border-white/[0.08] hover:bg-white/[0.04] hover:shadow-[0_14px_32px_rgba(15,23,42,0.45)]"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ type: "spring", stiffness: 50, damping: 20, delay: i * 0.08 }}
+            className="group relative flex flex-col gap-1 rounded-2xl border border-white/[0.03] bg-white/[0.015] px-4 py-3 text-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/20 hover:-translate-y-1 hover:border-white/[0.14] hover:bg-white/[0.04] hover:shadow-[0_14px_32px_rgba(15,23,42,0.45)]"
             tabIndex={0}
           >
             <span className="text-xs uppercase tracking-[0.2em] text-slate-400">
               {item.label}
             </span>
-            <span className="text-lg font-semibold tracking-tight text-white">
+            <span className={`text-lg font-semibold tracking-tight text-white ${item.accent ? "text-glow-cyan" : ""}`}>
               {item.value}
             </span>
             <span className="text-xs text-slate-400/80">{item.detail}</span>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>

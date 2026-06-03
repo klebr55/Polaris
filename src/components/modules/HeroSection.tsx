@@ -4,15 +4,16 @@ import type { ReactNode } from "react";
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import PandemicStatsBar from "./PandemicStatsBar";
+import SplitTextReveal from "./SplitTextReveal";
 
 interface HeroSectionProps {
   children: ReactNode;
 }
 
 const HEADLINE_LINES = [
-  { text: "Quando as portas", gradient: "from-white via-slate-100 to-slate-400" },
-  { text: "se fecharam,", gradient: "from-cyan-300 via-cyan-400 to-blue-400" },
-  { text: "a tela abriu o mundo.", gradient: "from-slate-200 to-slate-500" },
+  { text: "Quando as portas", gradient: "from-white via-slate-100 to-slate-400", glow: false },
+  { text: "se fecharam,", gradient: "from-cyan-300 via-cyan-400 to-blue-400", glow: true },
+  { text: "a tela abriu o mundo.", gradient: "from-slate-200 to-slate-500", glow: false },
 ];
 
 export default function HeroSection({ children }: HeroSectionProps) {
@@ -29,6 +30,7 @@ export default function HeroSection({ children }: HeroSectionProps) {
 
   return (
     <section
+      id="choque"
       ref={sectionRef}
       className="relative flex min-h-[110vh] items-center px-6 py-32"
     >
@@ -57,21 +59,15 @@ export default function HeroSection({ children }: HeroSectionProps) {
 
           <div className="relative">
             <div className="pointer-events-none absolute -inset-x-12 -top-10 h-32 rounded-full bg-cyan-400/[0.05] blur-[80px]" />
-            <h1 className="relative z-10 max-w-4xl text-balance text-5xl font-extrabold leading-[1.05] tracking-[-0.04em] sm:text-6xl lg:text-7xl xl:text-8xl">
+            <h1 className="font-display relative z-10 max-w-4xl text-balance text-5xl font-extrabold leading-[1.05] tracking-tighter sm:text-6xl lg:text-7xl xl:text-8xl">
               {HEADLINE_LINES.map((line, i) => (
-                <motion.span
-                  key={line.text}
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.9,
-                    ease: [0.22, 1, 0.36, 1],
-                    delay: i * 0.12,
-                  }}
-                  className={`block bg-gradient-to-b bg-clip-text text-transparent ${line.gradient}`}
-                >
-                  {line.text}
-                </motion.span>
+                <span key={line.text} className="block">
+                  <SplitTextReveal
+                    text={line.text}
+                    delay={i * 0.12}
+                    className={`bg-gradient-to-b bg-clip-text text-transparent ${line.gradient} ${line.glow ? "text-glow-cyan" : ""}`}
+                  />
+                </span>
               ))}
             </h1>
           </div>
@@ -117,25 +113,27 @@ export default function HeroSection({ children }: HeroSectionProps) {
         </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.55 }}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ type: "spring", stiffness: 50, damping: 20 }}
         >
           <PandemicStatsBar />
         </motion.div>
 
         <motion.figure
-          initial={{ opacity: 0, y: 28, scale: 0.97 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
+          initial={{ opacity: 0, y: 30, scale: 0.97 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, margin: "-60px" }}
           whileHover={{ y: -4, scale: 1.01 }}
-          transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1], delay: 0.7 }}
-          className="group relative overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.03] px-6 py-8 shadow-[0_8px_60px_rgba(0,0,0,0.4)] ring-1 ring-inset ring-white/[0.05] backdrop-blur-2xl"
+          transition={{ type: "spring", stiffness: 50, damping: 20 }}
+          className="polaris-card group relative overflow-hidden px-6 py-8 ring-1 ring-inset ring-white/[0.04] hover:shadow-[0_20px_80px_rgba(8,145,178,0.18)] hover:border-white/[0.18]"
           tabIndex={0}
         >
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-cyan-500/[0.03] via-transparent to-blue-500/[0.02]" />
           <div className="pointer-events-none absolute inset-0 rounded-3xl bg-white/[0.03] opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100" />
-          <div className="pointer-events-none absolute inset-0 rounded-3xl border border-white/[0.07] opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100" />
-          <div className="pointer-events-none absolute inset-0 rounded-3xl shadow-[0_20px_70px_rgba(8,145,178,0.12)] opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100" />
+          <div className="pointer-events-none absolute inset-0 rounded-3xl border border-cyan-400/[0.12] opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100" />
+          <div className="pointer-events-none absolute inset-0 rounded-3xl shadow-[0_0_40px_rgba(34,211,238,0.08)] opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100" />
           <div className="relative">{children}</div>
         </motion.figure>
       </motion.div>

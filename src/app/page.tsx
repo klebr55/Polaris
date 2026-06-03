@@ -96,7 +96,7 @@ function PageSkeleton() {
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col gap-16 pb-16 scroll-smooth sm:gap-24">
+    <main id="main-content" className="flex min-h-screen flex-col gap-16 pb-16 scroll-smooth sm:gap-24">
       <DataErrorBoundary
         fallback={
           <ServiceErrorFallback
