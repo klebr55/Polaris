@@ -1,16 +1,29 @@
 <div align="center">
 
-# ✦ Polaris
 
-**Data Storytelling · IBGE PNAD TIC · Mato Grosso**
+# ✦ POLARIS
 
-*Uma experiência cinematográfica que transforma dados públicos do IBGE em narrativa visual sobre como a pandemia de COVID-19 reconfigurou a relação de Mato Grosso com a internet.*
+Dados que iluminam o que precisa ser visto.
 
-[![Next.js](https://img.shields.io/badge/Next.js-16.2-black?logo=next.js)](https://nextjs.org)
-[![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react)](https://react.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript)](https://typescriptlang.org)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss)](https://tailwindcss.com)
-[![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel)](https://vercel.com)
+<img src="./public/og-image.png" alt="Polaris Banner" width="100%" />
+
+### Data Storytelling · IBGE PNAD TIC · Mato Grosso
+
+> Uma experiência cinematográfica que revela como a pandemia transformou a internet de conveniência em infraestrutura de sobrevivência.
+
+<br>
+
+<a href="https://projectpolaris-unic.vercel.app">
+  <img src="https://img.shields.io/badge/Live%20Experience-22D3EE?style=for-the-badge&logo=vercel&logoColor=white" />
+</a>
+
+<br><br>
+
+<img src="https://img.shields.io/badge/Next.js-16.2-black?logo=next.js&style=flat-square" />
+<img src="https://img.shields.io/badge/React-19.2-61DAFB?logo=react&style=flat-square" />
+<img src="https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&style=flat-square" />
+<img src="https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&style=flat-square" />
+<img src="https://img.shields.io/badge/Vercel-Deploy-black?logo=vercel&style=flat-square" />
 
 </div>
 
